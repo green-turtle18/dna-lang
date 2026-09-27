@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
+.venv/
+venv/
+
+# raw data — everyone downloads it themselves
+data/*.txt
+data/*.fasta
+data/sequences.csv
+
+# but keep the split, it must be identical for everyone
+!data/splits.csv
+!data/splits_random.csv
