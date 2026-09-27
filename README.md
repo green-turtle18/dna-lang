@@ -8,7 +8,7 @@ Midsem flash talk: 6 October. 3-4 min, 2 slides.
 
 ## Setup
 
-    git clone <repo-url>
+    git clone https://github.com/green-turtle18/dna-lang.git
     cd dna-lang
     pip install -r requirements.txt
 
