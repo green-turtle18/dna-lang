@@ -4,21 +4,16 @@ Can an AI learn the "language" of DNA? We treat sequences as text,
 tokenise with k-mers, and test whether classifiers learn real sequence
 structure or just base composition and length.
 
-Midsem flash talk: **6 October**. 3-4 min, 2 slides.
-
 ## Setup
-
-    git clone <repo-url>
+```bash
+    git clone https://github.com/green-turtle18/dna-lang.git
     cd dna-lang
     pip install -r requirements.txt
+```
 
 Download the dataset from
 https://www.kaggle.com/datasets/nageshsingh/dna-sequence-dataset
 into `data/`. Raw files are gitignored — everyone downloads their own.
-
-Check the skeleton works (run from the repo root, not inside `src/`):
-
-    python -c "from src.dataio import load_data; print(load_data().shape)"
 
 ## Layout
 
@@ -32,13 +27,12 @@ Check the skeleton works (run from the repo root, not inside `src/`):
 
 | File | Owner | Guide |
 |---|---|---|
-| `src/dataio.py` | LEORA | [docs/leora.md](docs/leora.md) |
+| `src/dataio.py` | NAME1 | [docs/name1.md](docs/name1.md) |
 | `src/represent.py` | NAME2 | [docs/name2.md](docs/name2.md) |
 | `src/models.py` | NAME3 | [docs/name3.md](docs/name3.md) |
 | `src/controls.py` | NAME4 | [docs/name4.md](docs/name4.md) |
 
-Only the owner edits their file. Signature changes get announced in the
-group chat before pushing.
+Only the owner edits their file.
 
 The contracts below are binding — everyone codes against them. The docs
 are guides for getting your own part done; follow them or don't.
@@ -47,7 +41,7 @@ are guides for getting your own part done; follow them or don't.
 
 # Contracts
 
-## 1. `data/sequences.csv` — produced by [LEORA](docs/leora.md)
+## 1. `data/sequences.csv` — produced by [NAME1](docs/name1.md)
 
 | column | type | notes |
 |---|---|---|
@@ -58,7 +52,7 @@ are guides for getting your own part done; follow them or don't.
 | length | int | `len(sequence)` |
 | gc | float | GC fraction, 0-1 |
 
-## 2. `data/splits.csv` — produced by [LEORA](docs/leora.md)
+## 2. `data/splits.csv` — produced by [NAME1](docs/name1.md)
 
 Columns: `seq_id`, `split` where split is `train` or `test`.
 Join on `seq_id`. **Nobody makes their own split.**
