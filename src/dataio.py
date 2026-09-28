@@ -156,9 +156,18 @@ def load_data():
     return _stub()
 
 
-def load_splits(random=False):
+SPLITS = {
+    "random": "splits_random.csv",   # leaky baseline
+    "nodup":  "splits_nodup.csv",    # near-duplicates kept together
+    "species": "splits.csv",         # train human+chimp, test dog
+}
+
+
+def load_splits(split="species"):
     """Split index. Falls back to a stub split if the file is absent."""
-    path = DATA / ("splits_random.csv" if random else "splits.csv")
+    if split not in SPLITS:
+        raise ValueError(f"split must be one of {list(SPLITS)}, got {split!r}")
+    path = DATA / SPLITS[split]
     if path.exists():
         return pd.read_csv(path)
     df = _stub()
@@ -168,10 +177,10 @@ def load_splits(random=False):
     })
 
 
-def load_split_data(random=False):
+def load_split_data(split="species"):
     """Convenience: returns (train_df, test_df) already joined."""
     df = load_data()
-    sp = load_splits(random=random)
+    sp = load_splits(split)
     df = df.merge(sp, on="seq_id", how="inner")
     return df[df.split == "train"].copy(), df[df.split == "test"].copy()
 

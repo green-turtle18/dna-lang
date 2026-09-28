@@ -1,4 +1,4 @@
-# Leora — Data & Splits (guide)
+# NAME1 — Data & Splits (guide)
 
 Owns `src/dataio.py`. Binding spec is
 [contracts 1 and 2](../README.md#contracts) — this page is just a
