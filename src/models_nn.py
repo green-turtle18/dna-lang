@@ -54,6 +54,18 @@ def make_model():
         random_state=SEED,
     )
 
+def fit_score(Xtr, ytr, Xte, yte):
+    """Train the standard MLP on any features. Returns (row_metrics, pred)."""
+    model = make_model()
+    model.fit(Xtr, ytr)
+    pred = model.predict(Xte)
+    return {
+        "accuracy": round(accuracy_score(yte, pred), 4),
+        "macro_f1": round(f1_score(yte, pred, average="macro"), 4),
+        "n_features": Xtr.shape[1],
+        "seed": SEED,
+        "epochs": model.n_iter_,
+    }, pred
 
 def run_one(split, k_label, k, overlap):
     tr, te = load_split_data(split)
