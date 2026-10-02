@@ -1,0 +1,10 @@
+representation,k,model,split_type,accuracy,macro_f1,n_features,seed,notes
+composition_only,none,logreg,random,0.3239929947460595,0.11545133984158373,1,0,control=length
+composition_only,none,logreg,random,0.3073555166374781,0.06717060568366663,1,0,control=gc
+composition_only,none,logreg,random,0.3126094570928196,0.10113164150261125,2,0,control=length_gc
+composition_only,none,logreg,nodup,0.27208480565371024,0.10685268612760204,1,0,control=length
+composition_only,none,logreg,nodup,0.2508833922261484,0.057304277643260695,1,0,control=gc
+composition_only,none,logreg,nodup,0.2570671378091873,0.08733433407472027,2,0,control=length_gc
+composition_only,none,logreg,species,0.32875,0.1279104479014884,1,0,control=length
+composition_only,none,logreg,species,0.31625,0.06864740198073531,1,0,control=gc
+composition_only,none,logreg,species,0.3175,0.11655691437292037,2,0,control=length_gc
