@@ -24,6 +24,9 @@ Outputs:
 
 The controls use the shared train/test splits produced by dataio.py.
 No split is created locally.
+
+Conclusion from comparison analysis:
+    The strong performance of the k-mer models cannot be explained by sequence length or GC content alone.
 """
 
 from pathlib import Path
