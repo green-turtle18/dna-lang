@@ -1,7 +1,21 @@
 representation,k,model,split_type,accuracy,macro_f1,n_features,seed,notes
+composition_only,none,logreg,random,0.3239929947460595,0.11545133984158373,1,0,control=length
+composition_only,none,rf,random,0.37302977232924694,0.35939784868810776,1,0,control=length
+composition_only,none,logreg,random,0.3073555166374781,0.06717060568366663,1,0,control=gc
+composition_only,none,rf,random,0.2591943957968476,0.2135738511592972,1,0,control=gc
+composition_only,none,logreg,random,0.3126094570928196,0.10113164150261125,2,0,control=length_gc
+composition_only,none,rf,random,0.5394045534150613,0.5239470956469684,2,0,control=length_gc
+composition_only,none,logreg,nodup,0.27208480565371024,0.10685268612760204,1,0,control=length
+composition_only,none,rf,nodup,0.29770318021201414,0.27961563947553686,1,0,control=length
+composition_only,none,logreg,nodup,0.2508833922261484,0.057304277643260695,1,0,control=gc
+composition_only,none,rf,nodup,0.21201413427561838,0.17602162775314684,1,0,control=gc
+composition_only,none,logreg,nodup,0.2570671378091873,0.08733433407472027,2,0,control=length_gc
+composition_only,none,rf,nodup,0.4213780918727915,0.4046197647721703,2,0,control=length_gc
 composition_only,none,logreg,species,0.32875,0.1279104479014884,1,0,control=length
 composition_only,none,rf,species,0.375,0.3573250467862609,1,0,control=length
 composition_only,none,logreg,species,0.31625,0.06864740198073531,1,0,control=gc
 composition_only,none,rf,species,0.21,0.1524146993807649,1,0,control=gc
 composition_only,none,logreg,species,0.3175,0.11655691437292037,2,0,control=length_gc
 composition_only,none,rf,species,0.43625,0.40682797960694195,2,0,control=length_gc
+tfidf,6,logreg,shuffled_bases,0.4975,0.3361999744835398,4096,0,bases shuffled within each sequence; species split
+tfidf,6,rf,shuffled_bases,0.38625,0.20189440988209276,4096,0,bases shuffled within each sequence; species split

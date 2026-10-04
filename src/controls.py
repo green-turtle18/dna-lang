@@ -172,6 +172,80 @@ def run_control(split, control, model_name):
         "notes": f"control={control}",
     }
 
+# ---------------------------------------------------------------------------
+# Shuffled-base control
+# ---------------------------------------------------------------------------
+
+def shuffle_sequence(sequence, rng):
+    """Randomly permute bases within one sequence."""
+    bases = list(sequence)
+    rng.shuffle(bases)
+    return "".join(bases)
+
+
+def run_shuffled_bases(model_name, seed=SEED):
+    """
+    Shuffle bases within each sequence, preserving length and base
+    composition while destroying original k-mer order.
+
+    Uses the species split: train human+chimp, test dog.
+    """
+    train, test = load_split_data("species")
+
+    rng = np.random.default_rng(seed)
+
+    train = train.copy()
+    test = test.copy()
+
+    train["sequence"] = train["sequence"].map(
+        lambda s: shuffle_sequence(s, rng)
+    )
+
+    test["sequence"] = test["sequence"].map(
+        lambda s: shuffle_sequence(s, rng)
+    )
+
+    X_train, X_test, features = vectorize(
+        train["sequence"].tolist(),
+        test["sequence"].tolist(),
+        k=6,
+        mode="tfidf",
+        overlap=True,
+    )
+
+    y_train = train["label"].to_numpy()
+    y_test = test["label"].to_numpy()
+
+    if model_name == "logreg":
+        model = LogisticRegression(
+            max_iter=2000,
+            random_state=SEED,
+        )
+    elif model_name == "rf":
+        model = RandomForestClassifier(
+            n_estimators=200,
+            n_jobs=-1,
+            random_state=SEED,
+        )
+    else:
+        raise ValueError(f"Unknown model: {model_name}")
+
+    model.fit(X_train, y_train)
+    predictions = model.predict(X_test)
+
+    metrics = evaluate_predictions(y_test, predictions)
+
+    return {
+        "representation": "tfidf",
+        "k": 6,
+        "model": model_name,
+        "split_type": "shuffled_bases",
+        "accuracy": metrics["accuracy"],
+        "macro_f1": metrics["macro_f1"],
+        "n_features": X_train.shape[1],
+        "seed": seed,
+        "notes": "bases shuffled within each sequence; species split",
+    }
 
 # ---------------------------------------------------------------------------
 # PCA
@@ -328,6 +402,19 @@ def main(quick=False):
                     f"macro-F1={row['macro_f1']:.3f}"
                 )
 
+    # Shuffled-base control on the species split.
+    print("\n--- shuffled bases ---")
+
+    for model_name in ["logreg", "rf"]:
+        row = run_shuffled_bases(model_name)
+        rows.append(row)
+
+        print(
+            f"{model_name:7s} "
+            f"accuracy={row['accuracy']:.3f} "
+            f"macro-F1={row['macro_f1']:.3f}"
+        )
+        
     # Save control results.
     RESULTS.parent.mkdir(parents=True, exist_ok=True)
 
