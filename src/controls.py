@@ -37,6 +37,7 @@ import pandas as pd
 
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.preprocessing import StandardScaler
 
@@ -115,7 +116,7 @@ def make_control_features(train, test, control):
     )
 
 
-def run_control(split, control):
+def run_control(split, control, model_name):
     """
     Train a logistic-regression classifier using only simple sequence
     properties and evaluate it on the shared test split.
@@ -137,11 +138,23 @@ def run_control(split, control):
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
 
-    model = LogisticRegression(
-        max_iter=2000,
-        random_state=SEED,
-    )
+    def make_model(kind):
+        if kind == "logreg":
+            return LogisticRegression(
+                max_iter=2000,
+                random_state=SEED
+            )
 
+        if kind == "rf":
+            return RandomForestClassifier(
+                n_estimators=200,
+                n_jobs=-1,
+                random_state=SEED
+            )
+
+        raise ValueError(f"Unknown model: {kind}")
+
+    model = make_model(model_name)
     model.fit(X_train, y_train)
     predictions = model.predict(X_test)
 
@@ -150,7 +163,7 @@ def run_control(split, control):
     return {
         "representation": "composition_only",
         "k": "none",
-        "model": "logreg",
+        "model": model_name,
         "split_type": split,
         "accuracy": metrics["accuracy"],
         "macro_f1": metrics["macro_f1"],
@@ -304,14 +317,16 @@ def main(quick=False):
         print(f"\n--- split: {split} ---")
 
         for control in controls:
-            row = run_control(split, control)
-            rows.append(row)
+            for model_name in ["logreg", "rf"]:
+                row = run_control(split, control, model_name)
+                rows.append(row)
 
-            print(
-                f"{control:12s} "
-                f"accuracy={row['accuracy']:.3f} "
-                f"macro-F1={row['macro_f1']:.3f}"
-            )
+                print(
+                    f"{control:12s} "
+                    f"{model_name:7s} "
+                    f"accuracy={row['accuracy']:.3f} "
+                    f"macro-F1={row['macro_f1']:.3f}"
+                )
 
     # Save control results.
     RESULTS.parent.mkdir(parents=True, exist_ok=True)
