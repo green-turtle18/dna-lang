@@ -303,8 +303,15 @@ def make_pca_plot(
         set(test["label"].tolist())
     )
 
-    # Plot each class separately so the legend identifies gene families.
-    for label in labels:
+    # One colour per class, shared by train (dots) and test (crosses).
+    colours = plt.get_cmap("tab10")
+
+    # Draw the biggest classes first so smaller ones stay visible on top.
+    counts = train["label"].value_counts()
+    order = sorted(labels, key=lambda c: -counts.get(c, 0))
+
+    for label in order:
+        colour = colours(int(label))
         train_mask = train["label"].to_numpy() == label
         test_mask = test["label"].to_numpy() == label
 
@@ -312,19 +319,20 @@ def make_pca_plot(
             ax.scatter(
                 train_2d[train_mask, 0],
                 train_2d[train_mask, 1],
-                alpha=0.45,
-                s=18,
-                label=f"train class {label}",
+                color=colour,
+                alpha=0.35,
+                s=14,
+                label=f"class {label}",
             )
 
         if test_mask.any():
             ax.scatter(
                 test_2d[test_mask, 0],
                 test_2d[test_mask, 1],
-                alpha=0.8,
+                color=colour,
+                alpha=0.9,
                 s=28,
                 marker="x",
-                label=f"test class {label}",
             )
 
     explained = pca.explained_variance_ratio_
@@ -336,15 +344,22 @@ def make_pca_plot(
         f"PC2 ({explained[1] * 100:.1f}% variance)"
     )
 
+    total = (explained[0] + explained[1]) * 100
     ax.set_title(
-        f"TF-IDF {k}-mer PCA — {split} split"
+        f"TF-IDF {k}-mer PCA — {split} split "
+        f"({total:.1f}% of variance shown)"
     )
 
-    ax.legend(
-        fontsize=7,
-        ncol=2,
-        loc="best",
-    )
+    from matplotlib.lines import Line2D
+    handles, names = ax.get_legend_handles_labels()
+    pairs = sorted(zip(names, handles), key=lambda p: int(p[0].split()[-1]))
+    names, handles = [p[0] for p in pairs], [p[1] for p in pairs]
+    handles += [
+        Line2D([], [], marker="o", ls="", color="grey", label="train"),
+        Line2D([], [], marker="x", ls="", color="grey", label="test"),
+    ]
+    names += ["train", "test"]
+    ax.legend(handles, names, fontsize=7, ncol=2, loc="best")
 
     fig.tight_layout()
 
