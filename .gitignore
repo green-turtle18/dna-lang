@@ -13,3 +13,6 @@ data/sequences.csv
 # but keep the split, it must be identical for everyone
 !data/splits.csv
 !data/splits_random.csv
+
+# disease dataset: raw downloads are rebuilt by src/disease_data.py
+data/raw_disease/
