@@ -1,0 +1,8 @@
+,value
+n_up_in_disease,18.0
+n_down_in_disease,15.0
+mean_gc_up,0.593
+mean_gc_down,0.556
+share_third_base_gc_up,0.722
+share_third_base_gc_down,0.467
+p_value_gc_up_vs_down,0.6814

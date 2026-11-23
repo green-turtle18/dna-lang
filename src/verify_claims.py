@@ -89,9 +89,14 @@ def stop_gain_codons_share(s):
     return sum(x in STOP_ONE_TRANSITION for x in c) / len(c)
 
 
-def gc3(s):
-    t = s[2::3]
-    return (t.count("G") + t.count("C")) / len(t)
+def gc_at(pos):
+    def f(s):
+        t = s[pos::3]
+        return (t.count("G") + t.count("C")) / len(t)
+    return f
+
+
+gc3 = gc_at(2)
 
 
 def longest_aa_run(s):
@@ -156,6 +161,9 @@ CLAIMS = {
     "Disease genes have more CGA codons (one C->T from a stop codon)": (cga_per_kb, +1),
     "Disease genes have more codons one transition from a stop": (stop_gain_codons_share, +1),
     "Disease genes differ in GC at codon position 3": (gc3, +1),
+    "Disease genes have higher GC3 (GC-biased gene conversion)": (gc3, +1),
+    "Disease genes differ in GC at codon position 1": (gc_at(0), +1),
+    "Disease genes differ in GC at codon position 2": (gc_at(1), +1),
     "Disease genes have fewer cysteines (zinc-finger families are non-disease)": (aa_share("C"), -1),
     "Disease genes have fewer C2H2 zinc-finger motifs": (zinc_finger_motifs, -1),
     "Disease genes have more hydrophobic residues": (hydrophobic_share, +1),
@@ -180,6 +188,70 @@ def bh(p):
     out = np.empty(len(p))
     out[o] = np.minimum(r, 1)
     return out
+
+
+def composition_control():
+    """ChatGPT's 'most important experiment': control for GC1, GC2, GC3,
+    CpG obs/exp and all 16 dinucleotides, then retrain the codon model.
+
+    Three models on the lenmatch split (logistic regression, 95% bootstrap CI):
+      composition only      : the 20 composition features
+      codon usage           : 61 codon frequencies, as before
+      codon usage, residual : each codon frequency with the part a linear
+                              model can predict from composition removed
+                              (fitted on TRAIN only), so what's left is
+                              codon information composition can't explain
+    """
+    from sklearn.linear_model import LinearRegression
+    from src.disease_data import load_disease_split_data
+    from src.interpret import (f_codon_usage, f_dinucleotides, f_cpg, model, auc_ci)
+
+    tr, te = load_disease_split_data("lenmatch")
+
+    def comp(seqs):
+        pos = np.array([[gc_at(i)(x) for i in range(3)] for x in seqs])
+        return np.hstack([pos, f_cpg(seqs)[0], f_dinucleotides(seqs)[0]])
+
+    Ctr, Cte = comp(tr.sequence.tolist()), comp(te.sequence.tolist())
+    Xtr, Xte = f_codon_usage(tr.sequence.tolist())[0], f_codon_usage(te.sequence.tolist())[0]
+    reg = LinearRegression().fit(Ctr, Xtr)
+    Rtr, Rte = Xtr - reg.predict(Ctr), Xte - reg.predict(Cte)
+    rows = []
+    for name, (a, b) in {
+        "composition only (GC1-3, CpG, 16 dinucleotides)": (Ctr, Cte),
+        "codon usage": (Xtr, Xte),
+        "codon usage, composition regressed out": (Rtr, Rte),
+        "codon usage + composition": (np.hstack([Xtr, Ctr]), np.hstack([Xte, Cte])),
+    }.items():
+        m = model().fit(a, tr.label)
+        auc, lo, hi = auc_ci(te.label, m.predict_proba(b)[:, 1])
+        rows.append({"model": name, "n_features": a.shape[1], "roc_auc": round(auc, 4),
+                     "ci_low": round(lo, 4), "ci_high": round(hi, 4)})
+        print(f"{name:50s} AUC {auc:.3f} [{lo:.3f}, {hi:.3f}]")
+    out = pd.DataFrame(rows)
+    out.to_csv(OUT / "composition_control.csv", index=False)
+    return out
+
+
+def enriched_codon_gc():
+    """Are the codons enriched in disease genes the GC-rich ones?"""
+    path = ROOT / "results" / "disease" / "vocab" / "differential_codon.csv"
+    d = pd.read_csv(path)
+    d = d[d.q_value < 0.05].copy()
+    d["codon_gc"] = d.word.map(lambda c: (c.count("G") + c.count("C")) / 3)
+    d["third_base_gc"] = d.word.str[2].isin(["G", "C"])
+    up, down = d[d.log2_ratio > 0], d[d.log2_ratio < 0]
+    p = mannwhitneyu(up.codon_gc, down.codon_gc).pvalue
+    res = {"n_up_in_disease": len(up), "n_down_in_disease": len(down),
+           "mean_gc_up": round(up.codon_gc.mean(), 3),
+           "mean_gc_down": round(down.codon_gc.mean(), 3),
+           "share_third_base_gc_up": round(up.third_base_gc.mean(), 3),
+           "share_third_base_gc_down": round(down.third_base_gc.mean(), 3),
+           "p_value_gc_up_vs_down": round(p, 4)}
+    pd.Series(res).to_csv(OUT / "enriched_codon_gc.csv", header=["value"])
+    for k, v in res.items():
+        print(f"{k:28s} {v}")
+    return res
 
 
 def main(claims=CLAIMS):
@@ -211,7 +283,12 @@ def main(claims=CLAIMS):
     with pd.option_context("display.max_colwidth", 70, "display.width", 200):
         print(out[["claim", "observed", "log2_effect", "auc_single_feature",
                    "q_value", "verdict"]].round(4).to_string(index=False))
-    print(f"\nwrote {(OUT / 'claim_tests.csv').relative_to(ROOT)}")
+    print("\n--- are disease-enriched codons the GC-rich ones? ---")
+    enriched_codon_gc()
+    print("\n--- composition-controlled retraining (lenmatch) ---")
+    composition_control()
+    print(f"\nwrote {OUT.relative_to(ROOT)}/claim_tests.csv, enriched_codon_gc.csv, "
+          "composition_control.csv")
     return out
 
 

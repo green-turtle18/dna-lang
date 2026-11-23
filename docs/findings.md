@@ -153,6 +153,11 @@ Figures: `summary_auc_by_representation.png`, `confusion_logreg_kcodon_lenmatch.
 
 - **The protein and the codon "spelling" each carry part of the signal**,
   about equally, and they partly overlap.
+- **Part of the signal is composition, but not all of it.** Composition
+  alone (GC at each codon position, CpG, all 16 dinucleotides) reaches
+  0.579. With composition regressed out of codon usage, the codon model
+  still reaches **0.558 [0.529, 0.587]**, above chance. This test was
+  suggested by ChatGPT in task 6.
 - **It's not just gene families.** Removing zinc fingers, olfactory
   receptors and keratin-associated proteins (mostly non-disease) barely
   changes the result: 0.598 → 0.586.
@@ -179,10 +184,14 @@ and the verification table. 18 testable claims were checked on `lenmatch`
   poly-amino-acid runs.
 - **Opposite of the claim:** "more codons one mutation from a stop" and
   "longer CAG/CAA (poly-Q) runs" both point the *other* way.
-- Claude scored 8 of 13. **The broad mechanisms held; the specific,
-  appealing stories often failed.**
-- **To do:** run the same prompt through ChatGPT and Gemini, then fill in
-  their rows in the table.
+- **Claude** scored 8 of 13 testable claims: the broad mechanisms held,
+  the specific stories often failed.
+- **ChatGPT** scored 5 supported plus 1 partly, out of 11. Its main
+  alternative explanation (GC-biased gene conversion raising GC3) was
+  wrong for our data. Its suggested control experiment was the most
+  useful contribution: about 40% of the signal above chance is
+  compositional, and the rest survives.
+- **To do:** run the same prompt through Gemini and add its table.
 
 ## Task 7: Final challenge
 
@@ -212,7 +221,7 @@ vocabulary and context to recognise sequence patterns associated with disease?"*
 7. Where the signal lives: `interpret_feature_sets.png`
 8. word2vec learned the genetic code: `embedding_codon_similarity_heatmap.png`
    + `embedding_similarity_groups.png`
-9. AI explanations vs data: the verification table from `ai_explanations.md`
+9. AI explanations vs data: the "Comparing the systems" table from `ai_explanations.md`
 10. Answer and limitations
 
 ## Limitations to say out loud

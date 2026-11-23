@@ -86,7 +86,18 @@ Questions:
 
 ### ChatGPT (OpenAI)
 
-*(paste response here)*
+Full response: [ai_responses/chatgpt.md](ai_responses/chatgpt.md). In short:
+1. Evolutionary constraint keeps particular codons.
+2. CpG and methylation history.
+3. Translational selection (tRNA supply, mRNA stability).
+4. Protein function shapes amino-acid composition.
+5. GC-biased gene conversion raises GC3. This is its main alternative
+   explanation.
+6. mRNA structure and splicing.
+
+Its main warning is that matching overall GC doesn't match GC by codon
+position or dinucleotides. Its "most important experiment" is to control
+for GC1–3 and dinucleotide composition, then retrain.
 
 ### Gemini (Google)
 
@@ -122,12 +133,49 @@ protein class. Several sharper, more specific
 predictions fail (CGA hotspots, TM segments, collagen repeats, low
 complexity).
 
-### Other systems (fill in)
+### ChatGPT's claims
 
-| System | Claim | Test (row in claim_tests.csv or new) | Result | Verdict |
-|---|---|---|---|---|
-| ChatGPT | | | | |
-| Gemini | | | | |
+Two experiments were added to `src/verify_claims.py` to test ChatGPT's
+suggestions: `composition_control()` and `enriched_codon_gc()`.
+Results are in `results/disease/ai_claims/`.
+
+| # | Claim | Test result | Verdict |
+|---|---|---|---|
+| E | Disease genes have higher GC3 (GC-biased gene conversion) | log2 +0.01, q = 0.12 | ❌ not supported |
+| E | The enriched codons tend to be GC-rich | mean codon GC 0.59 vs 0.56, p = 0.68; G/C third base 72% vs 47% of significant codons, Fisher p = 0.17 | ❌ not supported |
+| — | GC differs at codon positions 1 and 2 | GC1: q = 0.10. GC2 is *lower* in disease genes (q = 0.0001), which fits their more hydrophobic proteins | ❌ / opposite |
+| 3 | The CG-containing 6-mers are mostly composition | 6-mer TF-IDF AUC 0.569 vs 16 dinucleotides 0.559 on lenmatch | ✅ supported |
+| 4 | Controlling GC1–3 + CpG + dinucleotides should cut the AUC if the signal is compositional | composition alone 0.579; codon usage 0.598 → **0.558 [0.529, 0.587]** with composition regressed out | ◐ partly: part of the signal is compositional, but some survives (CI excludes 0.5) |
+| D | A homology-aware split should lower the AUC if related genes leak | random 0.666 vs family split 0.661 | ❌ not supported (no meaningful leakage) |
+| 1 | The arginine shift is genuine synonymous preference, not arginine abundance (RSCU) | CGN share *within* arginine higher in disease, q < 10⁻⁶; synonymous-only model AUC 0.573 | ✅ supported |
+| 1 | Synonymous shuffling keeping the protein: the signal partly persists | 0.598 → 0.575 | ✅ supported |
+| D | Amino-acid frequencies really differ (fewer Cys, more Gly) | Cys −0.18, Gly +0.06, both q < 10⁻⁶ | ✅ supported |
+| D | More transmembrane domains in disease proteins | q = 0.11 | ❌ not supported |
+| — | Amino-acid and synonymous information are complementary | each alone 0.578 / 0.573, combined 0.598 | ✅ supported |
+
+**Can't be tested with sequence-only data.** These need outside
+information: conservation and dS, methylation profiles, tRNA adaptation,
+ribosome profiling, expression levels, GO-category matching, publication
+counts, recombination rates, splicing motifs, and local genomic CpG.
+ChatGPT also assumed canonical transcripts; our sequences are ORFeome
+clones.
+
+ChatGPT: 5 supported, 1 partly, 5 not supported, out of 11 testable
+claims. Many of its points were experiment suggestions rather than
+claims.
+
+### Comparing the systems
+
+| | Claude | ChatGPT |
+|---|---|---|
+| Style | Bold, specific mechanisms | Hedged; focused on methodology and confounders |
+| Testable claims held | 8 / 13 | 5 + 1 partly / 11 |
+| Best call | CpG mutability, gene families | composition explains part of the signal; 6-mers ≈ dinucleotides |
+| Main miss | CGA nonsense hotspots, collagen repeats | GC3 / GC-biased gene conversion (its main alternative) |
+
+### Gemini (Google)
+
+*(paste response here, then add a table like the ones above)*
 
 ### What to say in the talk
 
@@ -135,7 +183,12 @@ complexity).
   Claude's case 8 of 13 held up (update this once the other systems are
 scored).
 - The ones that held are the **broad** ones: CpG mutability, gene families,
-  protein class. The **specific** mechanisms often failed. The appealing
+  protein class. The **specific** mechanisms often failed.
+- **ChatGPT's alternative explanation, GC-biased gene conversion raising
+  GC3, was wrong for our data** (GC3 doesn't differ). Its *method*
+  advice was the most useful thing either system said: after controlling
+  for composition, the AUC drops from 0.60 to 0.56, so about 40% of the
+  signal above chance is compositional. The rest survives. The appealing
   "nonsense-mutation hotspot" story for CGA codons wasn't significant, and
   "more codons one mutation away from a stop" went the *opposite* way.
 - The proposal's point stands: **verify, don't trust**. Every claim needs a

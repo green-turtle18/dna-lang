@@ -1,0 +1,5 @@
+model,n_features,roc_auc,ci_low,ci_high
+"composition only (GC1-3, CpG, 16 dinucleotides)",20,0.5787,0.5535,0.6061
+codon usage,61,0.598,0.5719,0.6239
+"codon usage, composition regressed out",61,0.5579,0.5294,0.5868
+codon usage + composition,81,0.5977,0.5722,0.6231
