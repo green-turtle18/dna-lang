@@ -19,18 +19,28 @@ Quick version:
 
 Outputs:
 
-    results/results_name4.csv
-    figures/pca_tfidf_k6.png
+    results/disease/results_nidhi.csv
+    figures/disease/pca_tfidf_k6.png
 
-The controls use the shared train/test splits produced by dataio.py.
-No split is created locally.
+The controls use the shared disease train/test splits produced by
+disease_data.py. No split is created locally.
 
-Conclusion from comparison analysis:
-    The strong performance of the k-mer models cannot be explained by sequence length or GC content alone.
+Disease genes are longer than non-disease genes (median 1,425 vs 1,074 nt),
+so on the random and family splits length alone carries real signal. That
+makes these controls the key comparison: a k-mer model only shows it reads
+DNA if it beats length+GC here, and if it stays above chance on the
+lenmatch split, where length and GC are matched between the classes.
+
+Only 29% of genes are disease genes, so every model uses
+class_weight="balanced"; without it models predict "non-disease" for
+everything and the comparison is meaningless.
 """
 
 from pathlib import Path
 import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))   # so `python src/controls.py` can import src
 
 import numpy as np
 import pandas as pd
@@ -38,16 +48,15 @@ import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, f1_score
+from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 from sklearn.preprocessing import StandardScaler
 
-from src.dataio import load_split_data, SPLITS
+from src.disease_data import load_disease_split_data
 from src.represent import vectorize
 
 
-ROOT = Path(__file__).resolve().parents[1]
-RESULTS = ROOT / "results" / "results_nidhi.csv"
-FIGURES = ROOT / "figures"
+RESULTS = ROOT / "results" / "disease" / "results_nidhi.csv"
+FIGURES = ROOT / "figures" / "disease"
 
 
 # ---------------------------------------------------------------------------
@@ -59,19 +68,44 @@ SEED = 0
 # The README/project currently considers k=6 an important representation.
 PCA_K = 6
 
-# Run all three shared splits for the controls.
-DEFAULT_SPLITS = ["random", "nodup", "species"]
+# Run all three shared disease splits for the controls, hardest last.
+DEFAULT_SPLITS = ["random", "family", "lenmatch"]
+HARDEST = "lenmatch"
 
 # Quick mode is useful while developing.
-QUICK_SPLITS = ["species"]
+QUICK_SPLITS = [HARDEST]
+
+CLASS_NAMES = {0: "non-disease", 1: "disease"}
+
+
+def make_model(kind):
+    """Shared classifier settings, identical to models.py."""
+    if kind == "logreg":
+        return LogisticRegression(
+            max_iter=2000,
+            random_state=SEED,
+            class_weight="balanced",
+        )
+    if kind == "rf":
+        return RandomForestClassifier(
+            n_estimators=200,
+            n_jobs=-1,
+            random_state=SEED,
+            class_weight="balanced",
+            min_samples_leaf=5,
+        )
+    raise ValueError(f"Unknown model: {kind}")
 
 
 # ---------------------------------------------------------------------------
 # Metrics
 # ---------------------------------------------------------------------------
 
-def evaluate_predictions(y_true, predictions):
-    """Return accuracy and macro-F1 for a set of predictions."""
+def evaluate_predictions(y_true, predictions, probabilities):
+    """Return accuracy, macro-F1 and ROC-AUC for a set of predictions.
+
+    probabilities: predicted probability of class 1 (disease).
+    """
     return {
         "accuracy": accuracy_score(y_true, predictions),
         "macro_f1": f1_score(
@@ -80,6 +114,7 @@ def evaluate_predictions(y_true, predictions):
             average="macro",
             zero_division=0,
         ),
+        "roc_auc": roc_auc_score(y_true, probabilities),
     }
 
 
@@ -121,7 +156,7 @@ def run_control(split, control, model_name):
     Train a logistic-regression classifier using only simple sequence
     properties and evaluate it on the shared test split.
     """
-    train, test = load_split_data(split)
+    train, test = load_disease_split_data(split)
 
     X_train, X_test = make_control_features(
         train,
@@ -138,27 +173,13 @@ def run_control(split, control, model_name):
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
 
-    def make_model(kind):
-        if kind == "logreg":
-            return LogisticRegression(
-                max_iter=2000,
-                random_state=SEED
-            )
-
-        if kind == "rf":
-            return RandomForestClassifier(
-                n_estimators=200,
-                n_jobs=-1,
-                random_state=SEED
-            )
-
-        raise ValueError(f"Unknown model: {kind}")
-
     model = make_model(model_name)
     model.fit(X_train, y_train)
     predictions = model.predict(X_test)
 
-    metrics = evaluate_predictions(y_test, predictions)
+    metrics = evaluate_predictions(
+        y_test, predictions, model.predict_proba(X_test)[:, 1]
+    )
 
     return {
         "representation": "composition_only",
@@ -167,6 +188,7 @@ def run_control(split, control, model_name):
         "split_type": split,
         "accuracy": metrics["accuracy"],
         "macro_f1": metrics["macro_f1"],
+        "roc_auc": metrics["roc_auc"],
         "n_features": X_train.shape[1],
         "seed": SEED,
         "notes": f"control={control}",
@@ -188,9 +210,9 @@ def run_shuffled_bases(model_name, seed=SEED):
     Shuffle bases within each sequence, preserving length and base
     composition while destroying original k-mer order.
 
-    Uses the species split: train human+chimp, test dog.
+    Uses the hardest split (lenmatch).
     """
-    train, test = load_split_data("species")
+    train, test = load_disease_split_data(HARDEST)
 
     rng = np.random.default_rng(seed)
 
@@ -216,24 +238,13 @@ def run_shuffled_bases(model_name, seed=SEED):
     y_train = train["label"].to_numpy()
     y_test = test["label"].to_numpy()
 
-    if model_name == "logreg":
-        model = LogisticRegression(
-            max_iter=2000,
-            random_state=SEED,
-        )
-    elif model_name == "rf":
-        model = RandomForestClassifier(
-            n_estimators=200,
-            n_jobs=-1,
-            random_state=SEED,
-        )
-    else:
-        raise ValueError(f"Unknown model: {model_name}")
-
+    model = make_model(model_name)
     model.fit(X_train, y_train)
     predictions = model.predict(X_test)
 
-    metrics = evaluate_predictions(y_test, predictions)
+    metrics = evaluate_predictions(
+        y_test, predictions, model.predict_proba(X_test)[:, 1]
+    )
 
     return {
         "representation": "tfidf",
@@ -242,9 +253,10 @@ def run_shuffled_bases(model_name, seed=SEED):
         "split_type": "shuffled_bases",
         "accuracy": metrics["accuracy"],
         "macro_f1": metrics["macro_f1"],
+        "roc_auc": metrics["roc_auc"],
         "n_features": X_train.shape[1],
         "seed": seed,
-        "notes": "bases shuffled within each sequence; species split",
+        "notes": f"bases shuffled within each sequence; {HARDEST} split",
     }
 
 # ---------------------------------------------------------------------------
@@ -252,7 +264,7 @@ def run_shuffled_bases(model_name, seed=SEED):
 # ---------------------------------------------------------------------------
 
 def make_pca_plot(
-    split="species",
+    split=HARDEST,
     k=PCA_K,
     seed=SEED,
 ):
@@ -264,7 +276,7 @@ def make_pca_plot(
 
     The resulting figure is saved under figures/.
     """
-    train, test = load_split_data(split)
+    train, test = load_disease_split_data(split)
 
     X_train, X_test, features = vectorize(
         train["sequence"].tolist(),
@@ -322,7 +334,7 @@ def make_pca_plot(
                 color=colour,
                 alpha=0.35,
                 s=14,
-                label=f"class {label}",
+                label=CLASS_NAMES[int(label)],
             )
 
         if test_mask.any():
@@ -352,8 +364,6 @@ def make_pca_plot(
 
     from matplotlib.lines import Line2D
     handles, names = ax.get_legend_handles_labels()
-    pairs = sorted(zip(names, handles), key=lambda p: int(p[0].split()[-1]))
-    names, handles = [p[0] for p in pairs], [p[1] for p in pairs]
     handles += [
         Line2D([], [], marker="o", ls="", color="grey", label="train"),
         Line2D([], [], marker="x", ls="", color="grey", label="test"),
@@ -414,10 +424,11 @@ def main(quick=False):
                     f"{control:12s} "
                     f"{model_name:7s} "
                     f"accuracy={row['accuracy']:.3f} "
-                    f"macro-F1={row['macro_f1']:.3f}"
+                    f"macro-F1={row['macro_f1']:.3f} "
+                    f"AUC={row['roc_auc']:.3f}"
                 )
 
-    # Shuffled-base control on the species split.
+    # Shuffled-base control on the hardest (lenmatch) split.
     print("\n--- shuffled bases ---")
 
     for model_name in ["logreg", "rf"]:
@@ -427,7 +438,8 @@ def main(quick=False):
         print(
             f"{model_name:7s} "
             f"accuracy={row['accuracy']:.3f} "
-            f"macro-F1={row['macro_f1']:.3f}"
+            f"macro-F1={row['macro_f1']:.3f} "
+            f"AUC={row['roc_auc']:.3f}"
         )
         
     # Save control results.
@@ -445,12 +457,11 @@ def main(quick=False):
         f"{RESULTS.relative_to(ROOT)}"
     )
 
-    # PCA is intended primarily as the visualisation for the hardest,
-    # cross-species split.
+    # PCA is intended primarily as the visualisation for the hardest split.
     print("\n--- PCA ---")
 
     pca_info = make_pca_plot(
-        split="species",
+        split=HARDEST,
         k=PCA_K,
     )
 
@@ -476,6 +487,7 @@ def main(quick=False):
                 "notes",
                 "accuracy",
                 "macro_f1",
+                "roc_auc",
             ]
         ].to_string(index=False)
     )

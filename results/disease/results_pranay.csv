@@ -1,0 +1,2 @@
+representation,k,model,split_type,accuracy,macro_f1,roc_auc,n_features,seed,notes
+tfidf,3,logreg,lenmatch,0.5565,0.5562,0.5783,64,0,0s
