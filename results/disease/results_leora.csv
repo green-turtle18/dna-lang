@@ -1,0 +1,2 @@
+representation,k,model,split_type,accuracy,macro_f1,roc_auc,n_features,seed,notes
+tfidf,3,mlp,lenmatch,0.5576,0.5576,0.5805,64,0,epochs=34; oversampled; 1s

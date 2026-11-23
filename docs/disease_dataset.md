@@ -152,7 +152,7 @@ What the numbers say:
    inflating these numbers. Still report `family`.
 
 Report `lenmatch` as the headline. It is the only split where length
-can't explain the result. The full table is in `results/disease_baselines.csv`.
+can't explain the result. The full table is in `results/disease/baselines.csv`.
 
 ## Caveats (say these before anyone asks)
 
