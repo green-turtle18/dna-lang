@@ -1,7 +1,10 @@
 # NAME1 — Data & Splits (guide)
 
+> **Pre-midsem guide** for the gene-family data. Paths and contracts here
+> describe that version; the current ones are in the [README](../../README.md).
+
 Owns `src/dataio.py`. Binding spec is
-[contracts 1 and 2](../README.md#contracts) — this page is just a
+[contracts 1 and 2](../../README.md#archive-pre-midsem-gene-family-data) — this page is just a
 suggested route there.
 
 Three people block on Oct 1, so the stub matters more than the data.

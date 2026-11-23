@@ -1,7 +1,10 @@
 # NAME2 — Representation (guide)
 
+> **Pre-midsem guide** for the gene-family data. Paths and contracts here
+> describe that version; the current ones are in the [README](../../README.md).
+
 Owns `src/represent.py`. Binding spec is
-[contract 3](../README.md#3-srcrepresentpy--produced-by-name2).
+[contract 3](../../README.md#archive-pre-midsem-gene-family-data).
 This page is a suggested route.
 
 ## Tonight

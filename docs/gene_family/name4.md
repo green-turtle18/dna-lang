@@ -1,7 +1,10 @@
 # NAME4 — Controls & Visualisation (guide)
 
+> **Pre-midsem guide** for the gene-family data. Paths and contracts here
+> describe that version; the current ones are in the [README](../../README.md).
+
 Owns `src/controls.py`. Binding spec is
-[contract 4](../README.md#4-resultsresults_namecsv--name3-and-name4).
+[contract 4](../../README.md#archive-pre-midsem-gene-family-data).
 This page is a suggested route.
 
 This role produces slide 2. The classifier numbers are ordinary;

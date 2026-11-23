@@ -1,7 +1,10 @@
 # NAME3 — Models & Evaluation (guide)
 
+> **Pre-midsem guide** for the gene-family data. Paths and contracts here
+> describe that version; the current ones are in the [README](../../README.md).
+
 Owns `src/models.py`. Binding spec is
-[contract 4](../README.md#4-resultsresults_namecsv--name3-and-name4).
+[contract 4](../../README.md#archive-pre-midsem-gene-family-data).
 This page is a suggested route.
 
 ## Tonight

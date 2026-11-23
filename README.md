@@ -37,20 +37,24 @@ Then run any module directly, for example `python src/models.py --quick`.
       disease/      disease vs non-disease genes + splits (committed), see docs/disease_dataset.md
       gene_family/  pre-midsem Kaggle human/chimp/dog data: sequences.csv (gitignored), split files (committed)
     src/            one module per person
-    docs/           per-person guides — suggestions, not requirements
-    figures/        PNGs for slides, 150 dpi (disease/ for current work)
-    results/        results CSVs (disease/ for current work)
+    docs/           disease_dataset.md (datasheet); gene_family/ holds the pre-midsem per-person guides
+    figures/
+      disease/      current PNGs for slides, 150 dpi
+      gene_family/  pre-midsem PNGs
+    results/
+      disease/      current results CSVs (contract 4)
+      gene_family/  pre-midsem results CSVs
 
 ## Ownership
 
 | File | Owner | Guide |
 |---|---|---|
 | `src/disease_data.py` | NAME1 | [docs/disease_dataset.md](docs/disease_dataset.md) |
-| `src/dataio.py` | NAME1 | [docs/name1.md](docs/name1.md) |
-| `src/represent.py` | NAME2 | [docs/name2.md](docs/name2.md) |
-| `src/models.py` | NAME3 | [docs/name3.md](docs/name3.md) |
-| `src/models_nn.py` | NAME1 | [docs/name1.md](docs/name1.md) |
-| `src/controls.py` | NAME4 | [docs/name4.md](docs/name4.md) |
+| `src/dataio.py` | NAME1 | [pre-midsem guide](docs/gene_family/name1.md) |
+| `src/represent.py` | NAME2 | [pre-midsem guide](docs/gene_family/name2.md) |
+| `src/models.py` | NAME3 | [pre-midsem guide](docs/gene_family/name3.md) |
+| `src/models_nn.py` | NAME1 | [pre-midsem guide](docs/gene_family/name1.md) |
+| `src/controls.py` | NAME4 | [pre-midsem guide](docs/gene_family/name4.md) |
 
 Only the owner edits their file.
 
@@ -238,7 +242,13 @@ capture no context. That's what embeddings are for in the second half.
 
 # Archive: pre-midsem gene-family data
 
-Kept so the midsem results can be reproduced. Download
+Everything from before the switch lives in `gene_family/` folders:
+`data/gene_family/`, `results/gene_family/`, `figures/gene_family/` and
+`docs/gene_family/`. The code itself has since been switched to the disease
+data; the exact midsem version is the git tag `midsem`
+(`git checkout midsem` to look, `git checkout main` to come back).
+
+To rebuild the gene-family data, download
 https://www.kaggle.com/datasets/nageshsingh/dna-sequence-dataset into
 `data/gene_family/` as `human.txt`, `chimpanzee.txt`, `dog.txt` (gitignored),
 then run `python src/dataio.py`. `from src.dataio import load_data;
@@ -256,6 +266,5 @@ print(load_data().shape)` should print `(5708, 7)`.
   mean length ranged from 1,146 (class 4) to 2,539 (class 5) while GC
   barely varied; 2,827 sequences shared their first 100 bases with
   another (1,029 groups, largest 43).
-- Midsem results stay where they were: `results/results_<name>.csv` and
-  the PNGs directly in `figures/`. New work writes to the `disease/`
-  subfolders, so nothing old is overwritten.
+- Midsem results are in `results/gene_family/results_<name>.csv` and
+  the midsem PNGs in `figures/gene_family/`.
