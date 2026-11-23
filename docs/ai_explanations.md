@@ -166,16 +166,57 @@ claims.
 
 ### Comparing the systems
 
-| | Claude | ChatGPT |
-|---|---|---|
-| Style | Bold, specific mechanisms | Hedged; focused on methodology and confounders |
-| Testable claims held | 8 / 13 | 5 + 1 partly / 11 |
-| Best call | CpG mutability, gene families | composition explains part of the signal; 6-mers ≈ dinucleotides |
-| Main miss | CGA nonsense hotspots, collagen repeats | GC3 / GC-biased gene conversion (its main alternative) |
+| | Claude | ChatGPT | Gemini |
+|---|---|---|---|
+| Style | Bold, specific mechanisms | Hedged; methodology and confounders | Most specific, mechanistic, confident |
+| Testable claims held | 8 / 13 (62%) | 5 + 1 partly / 11 (~50%) | 3 / 12 (25%), 2 opposite |
+| Best call | CpG mutability; gene families | composition explains part of the signal; 6-mers ≈ dinucleotides | zinc fingers drive the cysteine effect; fewer paralogs |
+| Main miss | CGA nonsense hotspots; collagen repeats | GC3 / GC-biased gene conversion | where the CpG excess sits (codon position, along the gene); TpG direction |
+| Untestable share | low | high (many experiment suggestions) | medium |
 
-### Gemini (Google)
+All three agreed on the core: CpG mutability and ascertainment, gene-family
+composition, and protein class. All three proposed GC3 or collagen
+explanations that the data rejected. Note: Claude built the analysis, so
+its score isn't blind.
 
-*(paste response here, then add a table like the ones above)*
+### Gemini's claims
+
+Full response: [ai_responses/gemini.md](ai_responses/gemini.md). Gemini gave
+the most specific, mechanistic answer:
+1. Purifying selection retains CpG.
+2. Germline hypomethylation and CpG islands at the 5' end.
+3. CpG hypermutability drives discovery.
+4. Gene families explain the amino-acid signal.
+5. Translational selection / GC3.
+
+Three new tests were added to `src/verify_claims.py`: `cpg_by_position()`,
+`paralog_families()` and `family_removal()`. Results are in
+`results/disease/ai_claims/`.
+
+| # | Claim | Test result | Verdict |
+|---|---|---|---|
+| 1 | Fewer TpG (CpG deamination product) in disease genes | TpG *higher* in disease, q < 10⁻⁶ | ❌ opposite |
+| 1 | Fewer CpA (the other deamination product) | log2 −0.02, q < 10⁻⁶ | ✅ supported |
+| 1 | CpG excess stronger at codon positions 1–2 (non-synonymous) than at synonymous sites | positions 1–2: log2 +0.062. Spanning the 3rd position into the next codon: **+0.127**, twice as strong | ❌ opposite |
+| 2 | CpG excess concentrated in the first ~500 bp, diminishing downstream | first 500 bp +0.104, after 500 bp +0.073, last 500 bp +0.088, all p < 10⁻⁶ | ❌ not supported (slight 5' tilt, but it doesn't fade) |
+| 4 | Removing ZNF/OR/KRTAP/collagen families sharply reduces the cysteine depletion | Cys log2 −0.18 → −0.07 | ✅ supported |
+| 4 | …and the glycine enrichment | Gly +0.057 → +0.048 | ❌ not supported |
+| 4 | …and drops the amino-acid-only AUC substantially | 0.578 → 0.574 | ❌ not supported |
+| 4 | Disease genes have fewer close paralogs | in a multi-gene family: 18.5% vs 20.3%, p = 0.03 | ✅ supported (weak) |
+| 4 | Collagens (Gly-X-Y repeats) enriched among disease genes | q = 0.12 | ❌ not supported |
+| 5 | Higher GC3 at matched total GC | q = 0.12 | ❌ not supported |
+| 5 | Enriched codons are C/G-ending, depleted ones A/T-ending | 72% vs 47% G/C-ending, Fisher p = 0.17 | ❌ not supported |
+| Artefact | Paralog leakage is the strongest artefact | it assumed a random split; our homology-aware split gives the same AUC (0.661 vs 0.666) | ❌ not supported |
+
+**Not testable with sequence-only data:** LOEUF/phyloP stratification, germline
+methylation, which mutations in OMIM are CpG transitions, tAI and
+expression, and exon count. The ascertainment-bias point is plausible but
+also untestable here.
+
+Gemini: 3 supported and 2 opposite, out of 12 testable claims.
+
+Note: the tests in this table that aren't in `claim_tests.csv` report
+p-values without FDR correction, so treat p = 0.03 as weak evidence.
 
 ### What to say in the talk
 
@@ -184,6 +225,10 @@ claims.
 scored).
 - The ones that held are the **broad** ones: CpG mutability, gene families,
   protein class. The **specific** mechanisms often failed.
+- **The more specific and confident the explanation, the more often it was
+  wrong.** Gemini made the sharpest predictions (CpG at non-synonymous
+  sites, concentrated at the 5' end, fewer TpG). Two came out the
+  *opposite* way, and its overall hit rate was 25%.
 - **ChatGPT's alternative explanation, GC-biased gene conversion raising
   GC3, was wrong for our data** (GC3 doesn't differ). Its *method*
   advice was the most useful thing either system said: after controlling

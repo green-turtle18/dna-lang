@@ -70,6 +70,12 @@ def cpg_obs_exp(s):
     return s.count("CG") * len(s) / (c * g) if c and g else 0.0
 
 
+def dinuc_share(d):
+    def f(s):
+        return s.count(d) / (len(s) - 1)    # str.count is non-overlapping; fine
+    return f                                # for heterodinucleotides like TG, CA
+
+
 def cgn_arginine_share(s):
     """Share of arginine codons that start with CG (CGA/CGC/CGG/CGT)."""
     arg = [c for c in codons(s) if CODON.get(c) == "R"]
@@ -177,6 +183,8 @@ CLAIMS = {
     "Disease genes have longer CAG/CAA (glutamine) codon runs": (cag_repeat, +1),
     "Disease genes have more low-complexity protein regions": (low_complexity_share, +1),
     "Disease genes use more rare codons": (rare_codon_share, +1),
+    "Disease genes have fewer TpG (CpG deamination product)": (dinuc_share("TG"), -1),
+    "Disease genes have fewer CpA (CpG deamination product)": (dinuc_share("CA"), -1),
 }
 
 
@@ -254,6 +262,97 @@ def enriched_codon_gc():
     return res
 
 
+def _effect(v, y):
+    a, b = v[y == 1], v[y == 0]
+    return np.log2(a.mean() / b.mean()), mannwhitneyu(a, b).pvalue
+
+
+def _cpg_oe(s):
+    c, g = s.count("C"), s.count("G")
+    return s.count("CG") * len(s) / (c * g) if c and g and len(s) > 1 else np.nan
+
+
+def cpg_by_position(df):
+    """Gemini: CpG excess should be stronger at codon positions 1-2 (changes
+    the protein) than where it touches the synonymous third position, and
+    concentrated in the first ~500 bp (CpG-island overlap), fading
+    downstream."""
+    y = df.label.to_numpy()
+    rows = []
+
+    def frame_cpg(s, start):            # CG starting at codon position `start`
+        n = sum(1 for i in range(start, len(s) - 1, 3) if s[i:i + 2] == "CG")
+        return n * 1000 / len(s)
+
+    for name, fn in [("CpG at codon positions 1-2 (non-synonymous)", lambda s: frame_cpg(s, 0)),
+                     ("CpG at codon positions 2-3", lambda s: frame_cpg(s, 1)),
+                     ("CpG at position 3 -> next codon 1", lambda s: frame_cpg(s, 2)),
+                     ("CpG obs/exp, first 500 bp", lambda s: _cpg_oe(s[:500])),
+                     ("CpG obs/exp, after 500 bp", lambda s: _cpg_oe(s[500:])),
+                     ("CpG obs/exp, last 500 bp", lambda s: _cpg_oe(s[-500:]))]:
+        v = df.sequence.map(fn).to_numpy(float)
+        ok = ~np.isnan(v)
+        eff, p = _effect(v[ok], y[ok])
+        rows.append({"measure": name, "mean_disease": v[ok & (y == 1)].mean(),
+                     "mean_non_disease": v[ok & (y == 0)].mean(),
+                     "log2_effect": eff, "p_value": p, "n": int(ok.sum())})
+    out = pd.DataFrame(rows)
+    out.to_csv(OUT / "cpg_by_position.csv", index=False)
+    print(out.round(5).to_string(index=False))
+    return out
+
+
+def paralog_families(df_all, lm_ids):
+    """Gemini: disease genes should have fewer close paralogs. Family size
+    comes from the homology groups in disease_data.py (all genes)."""
+    from src.disease_data import load_disease_data
+    full = load_disease_data(include_ambiguous=True)
+    size = full.group_id.map(full.group_id.value_counts())
+    d = df_all.assign(family_size=df_all.group_id.map(
+        full.groupby("group_id").size()))
+    d = d[d.seq_id.isin(lm_ids)]
+    y = d.label.to_numpy()
+    multi = (d.family_size > 1).to_numpy(float)
+    rows = []
+    for name, v in [("share in a multi-gene family", multi),
+                    ("family size", d.family_size.to_numpy(float))]:
+        eff, p = _effect(v, y)
+        rows.append({"measure": name, "mean_disease": v[y == 1].mean(),
+                     "mean_non_disease": v[y == 0].mean(), "log2_effect": eff, "p_value": p})
+    out = pd.DataFrame(rows)
+    out.to_csv(OUT / "paralog_families.csv", index=False)
+    print(out.round(5).to_string(index=False))
+    return out
+
+
+def family_removal():
+    """Gemini: removing zinc fingers, olfactory receptors, keratin-associated
+    proteins and collagens should sharply cut the Cys/Gly effects and the
+    amino-acid-only AUC."""
+    from src.disease_data import load_disease_split_data
+    from src.interpret import f_amino_acids, model, auc_ci, AMINO
+    tr, te = load_disease_split_data("lenmatch")
+    pattern = r"^ZNF|^ZSCAN|^ZFP|^ZKSCAN|^ZIK|^ZBTB|^OR\d|^KRTAP|^COL\d"
+    rows = []
+    for name, keep in [("all genes", None), ("without ZNF/OR/KRTAP/collagen families", pattern)]:
+        a = tr if keep is None else tr[~tr.gene_symbol.str.contains(keep)]
+        b = te if keep is None else te[~te.gene_symbol.str.contains(keep)]
+        Xa, Xb = f_amino_acids(a.sequence.tolist())[0], f_amino_acids(b.sequence.tolist())[0]
+        m = model().fit(Xa, a.label)
+        auc, lo, hi = auc_ci(b.label, m.predict_proba(Xb)[:, 1])
+        both = np.vstack([Xa, Xb])
+        yb = np.r_[a.label.to_numpy(), b.label.to_numpy()]
+        c, g = AMINO.index("C"), AMINO.index("G")
+        rows.append({"genes": name, "n_genes": len(yb),
+                     "aa_only_auc": round(auc, 4), "ci_low": round(lo, 4), "ci_high": round(hi, 4),
+                     "cys_log2_effect": round(_effect(both[:, c], yb)[0], 4),
+                     "gly_log2_effect": round(_effect(both[:, g], yb)[0], 4)})
+    out = pd.DataFrame(rows)
+    out.to_csv(OUT / "family_removal.csv", index=False)
+    print(out.to_string(index=False))
+    return out
+
+
 def main(claims=CLAIMS):
     OUT.mkdir(parents=True, exist_ok=True)
     df = load_disease_data()
@@ -287,6 +386,12 @@ def main(claims=CLAIMS):
     enriched_codon_gc()
     print("\n--- composition-controlled retraining (lenmatch) ---")
     composition_control()
+    print("\n--- Gemini: where is the CpG excess? ---")
+    cpg_by_position(df)
+    print("\n--- Gemini: do disease genes have fewer paralogs? ---")
+    paralog_families(load_disease_data(), set(df.seq_id))
+    print("\n--- Gemini: remove the big families ---")
+    family_removal()
     print(f"\nwrote {OUT.relative_to(ROOT)}/claim_tests.csv, enriched_codon_gc.csv, "
           "composition_control.csv")
     return out

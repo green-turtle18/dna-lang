@@ -173,7 +173,7 @@ Figures: `interpret_feature_sets.png`, `interpret_top_codons.png`
 ## Task 6: AI explanations vs verified results
 
 See [ai_explanations.md](ai_explanations.md): the prompt, the responses,
-and the verification table. 18 testable claims were checked on `lenmatch`
+and the verification table. 23 claim tests plus 5 targeted experiments were run on `lenmatch`
 (`python src/verify_claims.py`):
 
 - **Supported:** CpG higher in disease genes; more CG-arginine codons;
@@ -184,6 +184,7 @@ and the verification table. 18 testable claims were checked on `lenmatch`
   poly-amino-acid runs.
 - **Opposite of the claim:** "more codons one mutation from a stop" and
   "longer CAG/CAA (poly-Q) runs" both point the *other* way.
+- 3 AI systems, 36 testable claims. Comparison table in `ai_explanations.md`.
 - **Claude** scored 8 of 13 testable claims: the broad mechanisms held,
   the specific stories often failed.
 - **ChatGPT** scored 5 supported plus 1 partly, out of 11. Its main
@@ -191,7 +192,16 @@ and the verification table. 18 testable claims were checked on `lenmatch`
   wrong for our data. Its suggested control experiment was the most
   useful contribution: about 40% of the signal above chance is
   compositional, and the rest survives.
-- **To do:** run the same prompt through Gemini and add its table.
+- **Gemini** made the most specific claims and scored worst: 3 of 12
+  supported, 2 the *opposite* way. Its CpG predictions failed: the excess
+  is strongest at synonymous-spanning sites rather than protein-changing
+  ones, and it persists along the whole gene instead of sitting at the
+  5' end. It was right that zinc-finger families drive the cysteine
+  effect: removing them shrinks it from −0.18 to −0.07.
+- **Takeaway:** all three AIs agreed on the core (CpG mutability and
+  ascertainment, gene families, protein class), and all three offered
+  specific mechanisms the data rejected. Confidence and specificity didn't
+  predict correctness.
 
 ## Task 7: Final challenge
 

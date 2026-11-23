@@ -1,0 +1,3 @@
+genes,n_genes,aa_only_auc,ci_low,ci_high,cys_log2_effect,gly_log2_effect
+all genes,8902,0.5783,0.5521,0.6045,-0.1779,0.0566
+without ZNF/OR/KRTAP/collagen families,8584,0.5738,0.5477,0.6016,-0.0667,0.0477
