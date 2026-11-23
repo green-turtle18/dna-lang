@@ -1,0 +1,84 @@
+representation,k,model,split_type,accuracy,macro_f1,roc_auc,n_features,seed,notes,source,label
+tfidf,3,mlp,random,0.5346,0.5274,0.6375,64,0,epochs=73; oversampled; 10s,results_leora.csv,TF-IDF k=3
+tfidf,4,mlp,random,0.6457,0.5772,0.6382,256,0,epochs=133; oversampled; 48s,results_leora.csv,TF-IDF k=4
+tfidf,6,mlp,random,0.6374,0.5649,0.5955,4096,0,epochs=40; oversampled; 133s,results_leora.csv,TF-IDF k=6
+tfidf,3-6,mlp,random,0.6358,0.5497,0.6006,5440,0,epochs=76; oversampled; 476s,results_leora.csv,TF-IDF k=3-6
+tfidf,codon,mlp,random,0.579,0.5611,0.6455,61,0,epochs=58; oversampled; 7s,results_leora.csv,TF-IDF codons
+tfidf,3,mlp,family,0.5032,0.5013,0.632,64,0,epochs=21; oversampled; 3s,results_leora.csv,TF-IDF k=3
+tfidf,4,mlp,family,0.6442,0.5715,0.6096,256,0,epochs=186; oversampled; 86s,results_leora.csv,TF-IDF k=4
+tfidf,6,mlp,family,0.6343,0.547,0.5739,4096,0,epochs=51; oversampled; 181s,results_leora.csv,TF-IDF k=6
+tfidf,3-6,mlp,family,0.6286,0.5446,0.57,5440,0,epochs=72; oversampled; 482s,results_leora.csv,TF-IDF k=3-6
+tfidf,codon,mlp,family,0.5897,0.5637,0.6375,61,0,epochs=131; oversampled; 16s,results_leora.csv,TF-IDF codons
+tfidf,3,mlp,lenmatch,0.5576,0.5576,0.5805,64,0,epochs=34; oversampled; 2s,results_leora.csv,TF-IDF k=3
+tfidf,4,mlp,lenmatch,0.5593,0.5588,0.5816,256,0,epochs=18; oversampled; 3s,results_leora.csv,TF-IDF k=4
+tfidf,6,mlp,lenmatch,0.5582,0.554,0.5769,4096,0,epochs=16; oversampled; 23s,results_leora.csv,TF-IDF k=6
+tfidf,3-6,mlp,lenmatch,0.5509,0.5509,0.5772,5440,0,epochs=18; oversampled; 48s,results_leora.csv,TF-IDF k=3-6
+tfidf,codon,mlp,lenmatch,0.5381,0.538,0.5695,61,0,epochs=13; oversampled; 1s,results_leora.csv,TF-IDF codons
+w2v_mean,codon,logreg,random,0.5436,0.5254,0.5875,32,0,mean of word vectors; 0s,results_leora_w2v.csv,"word2vec mean, codons"
+w2v_mean,codon,rf,random,0.6515,0.5744,0.6336,32,0,mean of word vectors; 11s,results_leora_w2v.csv,"word2vec mean, codons"
+w2v_mean,codon,mlp,random,0.5318,0.5257,0.6285,32,0,mean of word vectors; 1s,results_leora_w2v.csv,"word2vec mean, codons"
+w2v_mean,6,logreg,random,0.5468,0.5273,0.5784,64,0,mean of word vectors; 0s,results_leora_w2v.csv,"word2vec mean, 6-mers"
+w2v_mean,6,rf,random,0.6722,0.5901,0.655,64,0,mean of word vectors; 17s,results_leora_w2v.csv,"word2vec mean, 6-mers"
+w2v_mean,6,mlp,random,0.6259,0.573,0.6232,64,0,mean of word vectors; 6s,results_leora_w2v.csv,"word2vec mean, 6-mers"
+w2v_mean,codon,logreg,family,0.5597,0.5395,0.5879,32,0,mean of word vectors; 0s,results_leora_w2v.csv,"word2vec mean, codons"
+w2v_mean,codon,rf,family,0.6583,0.5852,0.6382,32,0,mean of word vectors; 11s,results_leora_w2v.csv,"word2vec mean, codons"
+w2v_mean,codon,mlp,family,0.5839,0.5649,0.6462,32,0,mean of word vectors; 2s,results_leora_w2v.csv,"word2vec mean, codons"
+w2v_mean,6,logreg,family,0.5558,0.5332,0.5984,64,0,mean of word vectors; 0s,results_leora_w2v.csv,"word2vec mean, 6-mers"
+w2v_mean,6,rf,family,0.6914,0.6081,0.655,64,0,mean of word vectors; 18s,results_leora_w2v.csv,"word2vec mean, 6-mers"
+w2v_mean,6,mlp,family,0.6063,0.5527,0.6009,64,0,mean of word vectors; 8s,results_leora_w2v.csv,"word2vec mean, 6-mers"
+w2v_mean,codon,logreg,lenmatch,0.5565,0.5564,0.5843,32,0,mean of word vectors; 0s,results_leora_w2v.csv,"word2vec mean, codons"
+w2v_mean,codon,rf,lenmatch,0.5604,0.5602,0.6005,32,0,mean of word vectors; 5s,results_leora_w2v.csv,"word2vec mean, codons"
+w2v_mean,codon,mlp,lenmatch,0.552,0.5509,0.5755,32,0,mean of word vectors; 0s,results_leora_w2v.csv,"word2vec mean, codons"
+w2v_mean,6,logreg,lenmatch,0.5576,0.5576,0.5726,64,0,mean of word vectors; 0s,results_leora_w2v.csv,"word2vec mean, 6-mers"
+w2v_mean,6,rf,lenmatch,0.5665,0.5665,0.5915,64,0,mean of word vectors; 8s,results_leora_w2v.csv,"word2vec mean, 6-mers"
+w2v_mean,6,mlp,lenmatch,0.5732,0.5731,0.5874,64,0,mean of word vectors; 1s,results_leora_w2v.csv,"word2vec mean, 6-mers"
+composition_only,none,logreg,random,0.6287902968400894,0.5739539701131144,0.6302079282362396,1,0,control=length,results_nidhi.csv,control: length
+composition_only,none,rf,random,0.5713373763166294,0.5267150680324333,0.5669412352444941,1,0,control=length,results_nidhi.csv,control: length
+composition_only,none,logreg,random,0.5081391637408235,0.4794094625691436,0.48741033020025,1,0,control=gc,results_nidhi.csv,control: gc
+composition_only,none,rf,random,0.5256942227896585,0.4925230715031292,0.5145615578064827,1,0,control=gc,results_nidhi.csv,control: gc
+composition_only,none,logreg,random,0.6297478455154804,0.576051879599611,0.623381855239987,2,0,control=length_gc,results_nidhi.csv,control: length + gc
+composition_only,none,rf,random,0.6054899457389084,0.5567406670750837,0.6011167218097295,2,0,control=length_gc,results_nidhi.csv,control: length + gc
+composition_only,none,logreg,family,0.6419910657306956,0.5847026004303737,0.6252603298433311,1,0,control=length,results_nidhi.csv,control: length
+composition_only,none,rf,family,0.5523292916400766,0.5157825416394338,0.5464689081819943,1,0,control=length,results_nidhi.csv,control: length
+composition_only,none,logreg,family,0.4901084875558392,0.4630120711876255,0.4747404675297234,1,0,control=gc,results_nidhi.csv,control: gc
+composition_only,none,rf,family,0.5344607530312699,0.4935237024504116,0.5099953204168867,1,0,control=gc,results_nidhi.csv,control: gc
+composition_only,none,logreg,family,0.6285896617740906,0.5744327599337007,0.6150908332498584,2,0,control=length_gc,results_nidhi.csv,control: length + gc
+composition_only,none,rf,family,0.5797702616464582,0.5298740306269766,0.5685466729858482,2,0,control=length_gc,results_nidhi.csv,control: length + gc
+composition_only,none,logreg,lenmatch,0.5203116304952699,0.5099744138726919,0.5185378810027601,1,0,control=length,results_nidhi.csv,control: length
+composition_only,none,rf,lenmatch,0.4952698942682248,0.4951942330176773,0.4818461568955863,1,0,control=length,results_nidhi.csv,control: length
+composition_only,none,logreg,lenmatch,0.4869226488592098,0.4864759484254897,0.4757399543118784,1,0,control=gc,results_nidhi.csv,control: gc
+composition_only,none,rf,lenmatch,0.4930439621591541,0.4930383104280879,0.4993390831652651,1,0,control=gc,results_nidhi.csv,control: gc
+composition_only,none,logreg,lenmatch,0.4924874791318864,0.491504724837479,0.4882038423611145,2,0,control=length_gc,results_nidhi.csv,control: length + gc
+composition_only,none,rf,lenmatch,0.4824707846410684,0.4820535993216406,0.4784752952136489,2,0,control=length_gc,results_nidhi.csv,control: length + gc
+tfidf,6,logreg,shuffled_bases,0.5002782415136339,0.5002223703314619,0.4936881513158873,4096,0,bases shuffled within each sequence; lenmatch split,results_nidhi.csv,control: shuffled bases (k=6)
+tfidf,6,rf,shuffled_bases,0.5153032832498609,0.5152168115731952,0.5137584674162425,4096,0,bases shuffled within each sequence; lenmatch split,results_nidhi.csv,control: shuffled bases (k=6)
+tfidf,3,logreg,random,0.5611,0.5458,0.6163,64,0,0s,results_pranay.csv,TF-IDF k=3
+tfidf,3,rf,random,0.6831,0.5991,0.6595,64,0,21s,results_pranay.csv,TF-IDF k=3
+tfidf,4,logreg,random,0.5793,0.5621,0.6459,256,0,0s,results_pranay.csv,TF-IDF k=4
+tfidf,4,rf,random,0.6952,0.5971,0.666,256,0,37s,results_pranay.csv,TF-IDF k=4
+tfidf,6,logreg,random,0.6125,0.5804,0.6446,4096,0,1s,results_pranay.csv,TF-IDF k=6
+tfidf,6,rf,random,0.7003,0.5829,0.66,4096,0,97s,results_pranay.csv,TF-IDF k=6
+tfidf,3-6,logreg,random,0.5966,0.5763,0.6554,5440,0,3s,results_pranay.csv,TF-IDF k=3-6
+tfidf,3-6,rf,random,0.6987,0.5933,0.6665,5440,0,170s,results_pranay.csv,TF-IDF k=3-6
+tfidf,codon,logreg,random,0.5563,0.5403,0.622,61,0,0s,results_pranay.csv,TF-IDF codons
+tfidf,codon,rf,random,0.6799,0.5911,0.6656,61,0,18s,results_pranay.csv,TF-IDF codons
+tfidf,3,logreg,family,0.5692,0.5524,0.6233,64,0,0s,results_pranay.csv,TF-IDF k=3
+tfidf,3,rf,family,0.6918,0.6054,0.6524,64,0,22s,results_pranay.csv,TF-IDF k=3
+tfidf,4,logreg,family,0.575,0.5581,0.6427,256,0,0s,results_pranay.csv,TF-IDF k=4
+tfidf,4,rf,family,0.7068,0.609,0.6613,256,0,59s,results_pranay.csv,TF-IDF k=4
+tfidf,6,logreg,family,0.6107,0.5745,0.6354,4096,0,1s,results_pranay.csv,TF-IDF k=6
+tfidf,6,rf,family,0.7029,0.5747,0.6421,4096,0,99s,results_pranay.csv,TF-IDF k=6
+tfidf,3-6,logreg,family,0.5881,0.5671,0.6514,5440,0,2s,results_pranay.csv,TF-IDF k=3-6
+tfidf,3-6,rf,family,0.7064,0.5908,0.6553,5440,0,103s,results_pranay.csv,TF-IDF k=3-6
+tfidf,codon,logreg,family,0.5718,0.5528,0.6354,61,0,0s,results_pranay.csv,TF-IDF codons
+tfidf,codon,rf,family,0.6911,0.6022,0.6613,61,0,18s,results_pranay.csv,TF-IDF codons
+tfidf,3,logreg,lenmatch,0.5565,0.5562,0.5783,64,0,0s,results_pranay.csv,TF-IDF k=3
+tfidf,3,rf,lenmatch,0.5531,0.553,0.5835,64,0,11s,results_pranay.csv,TF-IDF k=3
+tfidf,4,logreg,lenmatch,0.5609,0.5608,0.5851,256,0,0s,results_pranay.csv,TF-IDF k=4
+tfidf,4,rf,lenmatch,0.5682,0.5678,0.5968,256,0,36s,results_pranay.csv,TF-IDF k=4
+tfidf,6,logreg,lenmatch,0.5431,0.5431,0.5694,4096,0,1s,results_pranay.csv,TF-IDF k=6
+tfidf,6,rf,lenmatch,0.552,0.551,0.5673,4096,0,70s,results_pranay.csv,TF-IDF k=6
+tfidf,3-6,logreg,lenmatch,0.557,0.557,0.5845,5440,0,1s,results_pranay.csv,TF-IDF k=3-6
+tfidf,3-6,rf,lenmatch,0.5448,0.5442,0.5803,5440,0,92s,results_pranay.csv,TF-IDF k=3-6
+tfidf,codon,logreg,lenmatch,0.5626,0.5624,0.5992,61,0,0s,results_pranay.csv,TF-IDF codons
+tfidf,codon,rf,lenmatch,0.5593,0.5591,0.5923,61,0,17s,results_pranay.csv,TF-IDF codons

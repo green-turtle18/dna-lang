@@ -126,6 +126,9 @@ have 0 families on both sides.
 
 ## Baselines: read this before the talk
 
+> These are the first quick baselines. Final results from the full
+> pipeline are in [findings.md](findings.md).
+
 Disease genes are **longer** (median 1,425 vs 1,074 nt), as the
 literature also reports. So length alone carries signal, which is the
 same trap as in the gene-family data. The table below shows results with

@@ -1,0 +1,9 @@
+,real codon order,codon order shuffled
+mean_cosine_synonymous,0.8452,0.9041
+mean_cosine_non_synonymous,0.7113,0.846
+difference,0.1339,0.0581
+permutation_p_value,0.0005,0.0005
+synonyms_closer_within_same_3rd_base_type_p,1.87e-13,3.4e-10
+nearest_neighbour_is_synonym,0.574,0.361
+nearest_neighbour_is_synonym_by_chance,0.049,0.049
+nearest_neighbour_same_3rd_base_type,0.77,0.902

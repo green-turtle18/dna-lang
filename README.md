@@ -55,6 +55,12 @@ Then run any module directly, for example `python src/models.py --quick`.
 | `src/models.py` | NAME3 | [pre-midsem guide](docs/gene_family/name3.md) |
 | `src/models_nn.py` | NAME1 | [pre-midsem guide](docs/gene_family/name1.md) |
 | `src/controls.py` | NAME4 | [pre-midsem guide](docs/gene_family/name4.md) |
+| `src/vocab.py` | NAME1 | task 2: frequent, rare and differential words |
+| `src/interpret.py` | NAME1 | task 5: where the signal lives |
+| `src/embeddings.py` | NAME1 | task 3: word2vec, gene vectors |
+| `src/verify_claims.py` | NAME1 | task 6: [docs/ai_explanations.md](docs/ai_explanations.md) |
+| `src/integrate.py` | NAME1 | tasks 4 & 7: combined results, final model |
+| `src/plotstyle.py` | NAME1 | shared figure style (colours, fonts) |
 
 Only the owner edits their file.
 
@@ -137,7 +143,7 @@ Concatenated at integration.
 
     representation, k, model, split_type, accuracy, macro_f1, roc_auc, n_features, seed, notes
 
-    representation : count | tfidf | composition_only | <new ones, agree first>
+    representation : count | tfidf | composition_only | w2v_mean
     k              : 3 | 4 | 6 | 3-6 | codon | none
     model          : logreg | rf | mlp
     split_type     : random | family | lenmatch | shuffled_bases
@@ -179,34 +185,41 @@ A model can score above chance on length alone, knowing nothing about
 DNA. The composition controls in `controls.py` are the most important
 comparison, and `lenmatch` removes length entirely.
 
-**First results** (pre-midsem code with class weighting, k = 3, 4, 6, codon):
+**Final results** (full grids; see [docs/findings.md](docs/findings.md)):
 
-| split | length + GC only | k-mer models (ROC-AUC) |
+| split | length + GC only (best) | best sequence model (ROC-AUC) |
 |---|---|---|
-| family | ~0.59 | 0.57–0.66 |
-| lenmatch | ~0.48 (chance) | 0.56–0.60 |
+| family | 0.615 | 0.661 |
+| lenmatch | 0.488 (chance) | 0.601 |
 
-There is a small but real sequence signal beyond length. Codons are at
-or near the top for every model. The MLP doesn't beat logreg/RF, and the
-PCA plot shows no visible separation: the signal is weak and spread
-across many k-mers. Expect AUC around 0.6, not 0.95. That's a finding,
-not a bug.
+A small but real sequence signal remains once length is removed. Codons
+and k=4 do best, the MLP doesn't beat LR/RF, and word2vec learns the
+genetic code from context without improving classification.
 
 ---
 
-## Open items (second half)
+## Running everything (second half)
 
-- Rerun the full grid on all three splits (everyone, own module)
-- NAME1: vocabulary exploration — top/bottom k-mers per class on `lenmatch`
-- Embeddings: word2vec on k-mers, average into one vector per gene;
-  check whether k-mers in similar contexts get similar vectors
-- Interpretation: which k-mers/codons drive the `lenmatch` models, and
-  are they just codon bias or GC in disguise?
-- AI explanations: give the top k-mers to 2-3 chatbots, turn each claim
-  into a computable test, check it
-- Differences of 1-2 points between k values are probably noise at
-  this dataset size. Report the ranking, say which gaps are large
-  enough to mean anything.
+Every proposal task now has a module. Run from the repo root, in this order
+(times on a laptop):
+
+```bash
+python src/models.py        # LR + RF grid            ~30 min
+python src/models_nn.py     # MLP grid                ~25 min
+python src/controls.py      # length/GC/shuffle + PCA ~5 min
+python src/vocab.py         # task 2                  <1 min
+python src/interpret.py     # task 5                  ~3 min
+python src/embeddings.py    # task 3 (needs gensim)   ~15 min
+python src/verify_claims.py # task 6                  <1 min
+python src/integrate.py     # tasks 4 & 7, run last   <1 min
+```
+
+**Results and what they mean: [docs/findings.md](docs/findings.md).**
+That's the file to build the slides from.
+
+Differences of 1-2 points of AUC are within noise at this dataset size
+(95% CI about ±0.026 on the lenmatch test set). Report the ranking, and
+say which gaps are large enough to mean anything.
 
 ## Rules
 

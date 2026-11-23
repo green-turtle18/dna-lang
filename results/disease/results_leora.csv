@@ -1,2 +1,16 @@
 representation,k,model,split_type,accuracy,macro_f1,roc_auc,n_features,seed,notes
-tfidf,3,mlp,lenmatch,0.5576,0.5576,0.5805,64,0,epochs=34; oversampled; 1s
+tfidf,3,mlp,random,0.5346,0.5274,0.6375,64,0,epochs=73; oversampled; 10s
+tfidf,4,mlp,random,0.6457,0.5772,0.6382,256,0,epochs=133; oversampled; 48s
+tfidf,6,mlp,random,0.6374,0.5649,0.5955,4096,0,epochs=40; oversampled; 133s
+tfidf,3-6,mlp,random,0.6358,0.5497,0.6006,5440,0,epochs=76; oversampled; 476s
+tfidf,codon,mlp,random,0.579,0.5611,0.6455,61,0,epochs=58; oversampled; 7s
+tfidf,3,mlp,family,0.5032,0.5013,0.632,64,0,epochs=21; oversampled; 3s
+tfidf,4,mlp,family,0.6442,0.5715,0.6096,256,0,epochs=186; oversampled; 86s
+tfidf,6,mlp,family,0.6343,0.547,0.5739,4096,0,epochs=51; oversampled; 181s
+tfidf,3-6,mlp,family,0.6286,0.5446,0.57,5440,0,epochs=72; oversampled; 482s
+tfidf,codon,mlp,family,0.5897,0.5637,0.6375,61,0,epochs=131; oversampled; 16s
+tfidf,3,mlp,lenmatch,0.5576,0.5576,0.5805,64,0,epochs=34; oversampled; 2s
+tfidf,4,mlp,lenmatch,0.5593,0.5588,0.5816,256,0,epochs=18; oversampled; 3s
+tfidf,6,mlp,lenmatch,0.5582,0.554,0.5769,4096,0,epochs=16; oversampled; 23s
+tfidf,3-6,mlp,lenmatch,0.5509,0.5509,0.5772,5440,0,epochs=18; oversampled; 48s
+tfidf,codon,mlp,lenmatch,0.5381,0.538,0.5695,61,0,epochs=13; oversampled; 1s

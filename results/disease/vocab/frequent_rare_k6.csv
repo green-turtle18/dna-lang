@@ -1,0 +1,61 @@
+class,kind,rank,word,rel_freq
+non-disease,most frequent,1,CTGCTG,0.001415738387103922
+non-disease,most frequent,2,CTGGAG,0.0012653630644285962
+non-disease,most frequent,3,GAGGAG,0.0012479746436731025
+non-disease,most frequent,4,AGAAGA,0.0012396001539775915
+non-disease,most frequent,5,GAAGAA,0.0012309667777823967
+non-disease,most frequent,6,AAGAAG,0.001189333851509324
+non-disease,most frequent,7,CAGCAG,0.0011853602529437858
+non-disease,most frequent,8,GGAGGA,0.0011418924588623533
+non-disease,most frequent,9,CTGCAG,0.0011290995625596976
+non-disease,most frequent,10,CCTGGA,0.0010812752606621499
+non-disease,most frequent,11,GCTGCT,0.0010751572745906982
+non-disease,most frequent,12,TGAAGA,0.0010656505008025657
+non-disease,most frequent,13,CAGCTG,0.0010521061238639652
+non-disease,most frequent,14,TGCTGC,0.0010461097302441888
+non-disease,most frequent,15,TGGAGA,0.001020947988561411
+non-disease,rarest,1,TAGCGT,1.3786121634277526e-05
+non-disease,rarest,2,CGCGTA,1.568405725953116e-05
+non-disease,rarest,3,CGTTAG,1.665429607868024e-05
+non-disease,rarest,4,TTAGCG,1.888027119119913e-05
+non-disease,rarest,5,CGTAAT,1.9105677022775618e-05
+non-disease,rarest,6,ATAGCG,1.9671831341261086e-05
+non-disease,rarest,7,TAGCGC,1.9711593911403183e-05
+non-disease,rarest,8,GTCGTA,2.1404914904399098e-05
+non-disease,rarest,9,CGATAG,2.1573021766114866e-05
+non-disease,rarest,10,TAACGT,2.1592074473269497e-05
+non-disease,rarest,11,TAACGC,2.189326659624029e-05
+non-disease,rarest,12,CGTAAC,2.2278208256541338e-05
+non-disease,rarest,13,CGGTAA,2.277362463728659e-05
+non-disease,rarest,14,CGTATA,2.297076990246732e-05
+non-disease,rarest,15,CGTAGT,2.3119974876990403e-05
+disease,most frequent,1,CTGCTG,0.001313375991247753
+disease,most frequent,2,CTGGAG,0.001253828790102184
+disease,most frequent,3,GAAGAA,0.001244750836477168
+disease,most frequent,4,AGAAGA,0.0012227788574712618
+disease,most frequent,5,GAGGAG,0.0012017840029839198
+disease,most frequent,6,AAGAAG,0.001195307765001783
+disease,most frequent,7,CAGCAG,0.0011242659599599925
+disease,most frequent,8,CCTGGA,0.001114031194951999
+disease,most frequent,9,GGAGGA,0.0011023455708825912
+disease,most frequent,10,CTGCAG,0.001097316745392307
+disease,most frequent,11,TGAAGA,0.001048013116410381
+disease,most frequent,12,GCTGCT,0.001013285438407356
+disease,most frequent,13,CAGCTG,0.0010122177974459556
+disease,most frequent,14,TGCTGG,0.0010005515808965827
+disease,most frequent,15,TGGAGA,0.0009956802164691062
+disease,rarest,1,CGATAG,1.7624520006619242e-05
+disease,rarest,2,CGCGTA,1.7867115791865005e-05
+disease,rarest,3,CGTTAG,1.8670668208004898e-05
+disease,rarest,4,GTAACG,1.9460158703935136e-05
+disease,rarest,5,TAGCGT,1.9626800414351912e-05
+disease,rarest,6,CGGTAA,1.981569128119448e-05
+disease,rarest,7,TAGTCG,2.053396422399291e-05
+disease,rarest,8,TAACGC,2.1296380681680627e-05
+disease,rarest,9,CGTATA,2.153093501713764e-05
+disease,rarest,10,CGTAAC,2.2177090255952243e-05
+disease,rarest,11,TAGCGC,2.2327128982828675e-05
+disease,rarest,12,CGTAAT,2.270912453711813e-05
+disease,rarest,13,GCGTAA,2.292578077471001e-05
+disease,rarest,14,CGTTAA,2.353212740874767e-05
+disease,rarest,15,TTAGCG,2.358847265207007e-05

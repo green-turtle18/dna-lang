@@ -1,0 +1,5 @@
+split,genes,feature_set,n_train,n_test,roc_auc,ci_low,ci_high
+lenmatch,all genes,codon usage (61),7105,1797,0.598,0.5719,0.6239
+lenmatch,all genes,amino-acid composition (20),7105,1797,0.5783,0.5521,0.6045
+lenmatch,without zinc-finger / OR / KRTAP families,codon usage (61),6873,1742,0.5855,0.5591,0.612
+lenmatch,without zinc-finger / OR / KRTAP families,amino-acid composition (20),6873,1742,0.574,0.5452,0.6003

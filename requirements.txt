@@ -1,4 +1,7 @@
 numpy
 pandas
 scikit-learn
+scipy
 matplotlib
+gensim
+adjustText   # optional, only for label placement in one figure

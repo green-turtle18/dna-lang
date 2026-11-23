@@ -1,0 +1,5 @@
+group,count,mean,median
+"not synonymous, different 3rd-base type",872,0.8209,0.8329
+"not synonymous, same 3rd-base type",871,0.8711,0.8831
+"synonymous, different 3rd-base type",58,0.8892,0.8939
+"synonymous, same 3rd-base type",29,0.9337,0.9343

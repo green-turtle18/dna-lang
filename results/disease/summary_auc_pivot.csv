@@ -1,0 +1,28 @@
+label,model,random,family,lenmatch
+TF-IDF codons,logreg,0.622,0.635,0.599
+TF-IDF codons,mlp,0.646,0.638,0.57
+TF-IDF codons,rf,0.666,0.661,0.592
+TF-IDF k=3,logreg,0.616,0.623,0.578
+TF-IDF k=3,mlp,0.638,0.632,0.58
+TF-IDF k=3,rf,0.66,0.652,0.584
+TF-IDF k=3-6,logreg,0.655,0.651,0.584
+TF-IDF k=3-6,mlp,0.601,0.57,0.577
+TF-IDF k=3-6,rf,0.666,0.655,0.58
+TF-IDF k=4,logreg,0.646,0.643,0.585
+TF-IDF k=4,mlp,0.638,0.61,0.582
+TF-IDF k=4,rf,0.666,0.661,0.597
+TF-IDF k=6,logreg,0.645,0.635,0.569
+TF-IDF k=6,mlp,0.596,0.574,0.577
+TF-IDF k=6,rf,0.66,0.642,0.567
+control: gc,logreg,0.487,0.475,0.476
+control: gc,rf,0.515,0.51,0.499
+control: length,logreg,0.63,0.625,0.519
+control: length,rf,0.567,0.546,0.482
+control: length + gc,logreg,0.623,0.615,0.488
+control: length + gc,rf,0.601,0.569,0.478
+"word2vec mean, 6-mers",logreg,0.578,0.598,0.573
+"word2vec mean, 6-mers",mlp,0.623,0.601,0.587
+"word2vec mean, 6-mers",rf,0.655,0.655,0.592
+"word2vec mean, codons",logreg,0.588,0.588,0.584
+"word2vec mean, codons",mlp,0.628,0.646,0.576
+"word2vec mean, codons",rf,0.634,0.638,0.6

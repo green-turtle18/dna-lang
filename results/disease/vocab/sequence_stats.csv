@@ -1,0 +1,13 @@
+subset,class,n,median_length,mean_gc,mean_gc3,mean_cpg_obs_exp
+all genes,non-disease,11182.0,1074.0,0.5275,0.5978,0.4422
+all genes,disease,4483.0,1425.0,0.5294,0.6019,0.4661
+all genes,p-value length,,,,,0.0
+all genes,p-value gc,,,,,0.12945
+all genes,p-value gc3,,,,,0.139274
+all genes,p-value cpg_oe,,,,,0.0
+lenmatch,non-disease,4451.0,1419.0,0.5289,0.5968,0.438
+lenmatch,disease,4451.0,1419.0,0.5294,0.602,0.4665
+lenmatch,p-value length,,,,,0.836477
+lenmatch,p-value gc,,,,,0.806434
+lenmatch,p-value gc3,,,,,0.109969
+lenmatch,p-value cpg_oe,,,,,0.0
