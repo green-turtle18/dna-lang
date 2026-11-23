@@ -14,6 +14,9 @@ tfidf,4,mlp,lenmatch,0.5593,0.5588,0.5816,256,0,epochs=18; oversampled; 3s,resul
 tfidf,6,mlp,lenmatch,0.5582,0.554,0.5769,4096,0,epochs=16; oversampled; 23s,results_leora.csv,TF-IDF k=6
 tfidf,3-6,mlp,lenmatch,0.5509,0.5509,0.5772,5440,0,epochs=18; oversampled; 48s,results_leora.csv,TF-IDF k=3-6
 tfidf,codon,mlp,lenmatch,0.5381,0.538,0.5695,61,0,epochs=13; oversampled; 1s,results_leora.csv,TF-IDF codons
+transformer_mlm,codon,transformer,lenmatch,0.5598,0.556,0.5865,91841,0,pretrained; val AUC 0.599; 419s,results_leora_transformer.csv,"transformer, pretrained (codons)"
+transformer_scratch,codon,transformer,lenmatch,0.547,0.5391,0.5788,91841,0,no pretraining; val AUC 0.605; 425s,results_leora_transformer.csv,"transformer, no pretraining (codons)"
+transformer_mlm,codon,transformer,family,0.6579,0.5794,0.6301,91841,0,pretrained; val AUC 0.635; 737s,results_leora_transformer.csv,"transformer, pretrained (codons)"
 w2v_mean,codon,logreg,random,0.5436,0.5254,0.5875,32,0,mean of word vectors; 0s,results_leora_w2v.csv,"word2vec mean, codons"
 w2v_mean,codon,rf,random,0.6515,0.5744,0.6336,32,0,mean of word vectors; 11s,results_leora_w2v.csv,"word2vec mean, codons"
 w2v_mean,codon,mlp,random,0.5318,0.5257,0.6285,32,0,mean of word vectors; 1s,results_leora_w2v.csv,"word2vec mean, codons"

@@ -58,6 +58,7 @@ Then run any module directly, for example `python src/models.py --quick`.
 | `src/vocab.py` | NAME1 | task 2: frequent, rare and differential words |
 | `src/interpret.py` | NAME1 | task 5: where the signal lives |
 | `src/embeddings.py` | NAME1 | task 3: word2vec, gene vectors |
+| `src/transformer.py` | NAME1 | task 4: DNABERT-style codon transformer |
 | `src/verify_claims.py` | NAME1 | task 6: [docs/ai_explanations.md](docs/ai_explanations.md) |
 | `src/integrate.py` | NAME1 | tasks 4 & 7: combined results, final model |
 | `src/plotstyle.py` | NAME1 | shared figure style (colours, fonts) |
@@ -143,9 +144,9 @@ Concatenated at integration.
 
     representation, k, model, split_type, accuracy, macro_f1, roc_auc, n_features, seed, notes
 
-    representation : count | tfidf | composition_only | w2v_mean
+    representation : count | tfidf | composition_only | w2v_mean | transformer_mlm | transformer_scratch
     k              : 3 | 4 | 6 | 3-6 | codon | none
-    model          : logreg | rf | mlp
+    model          : logreg | rf | mlp | transformer
     split_type     : random | family | lenmatch | shuffled_bases
     roc_auc        : area under the ROC curve for class 1 (disease)
 
@@ -193,8 +194,9 @@ comparison, and `lenmatch` removes length entirely.
 | lenmatch | 0.488 (chance) | 0.601 |
 
 A small but real sequence signal remains once length is removed. Codons
-and k=4 do best, the MLP doesn't beat LR/RF, and word2vec learns the
-genetic code from context without improving classification.
+and k=4 do best. Neither the MLP nor a small DNABERT-style transformer
+beats LR/RF. word2vec learns the genetic code from context without
+improving classification.
 
 ---
 
@@ -210,6 +212,7 @@ python src/controls.py      # length/GC/shuffle + PCA ~5 min
 python src/vocab.py         # task 2                  <1 min
 python src/interpret.py     # task 5                  ~3 min
 python src/embeddings.py    # task 3 (needs gensim)   ~15 min
+python src/transformer.py   # task 4 (needs torch)    ~1 hour
 python src/verify_claims.py # task 6                  <1 min
 python src/integrate.py     # tasks 4 & 7, run last   <1 min
 ```
@@ -233,8 +236,9 @@ say which gaps are large enough to mean anything.
 experiments, PCA, word2vec-style embeddings, interpretation of top
 features, LLM-generated explanations checked against results.
 
-**Stretch, only once the above works:** transformers / DNABERT, BPE
-tokenisation.
+**Done as a stretch:** a small DNABERT-style transformer trained from scratch
+on codons (`src/transformer.py`). **Not done:** the real pretrained DNABERT
+(needs a GPU and HuggingFace access) and BPE tokenisation.
 
 ## Scope note for the talk
 

@@ -1,6 +1,6 @@
 """
 vocab.py — exploring the DNA "language" (proposal task 2).
-Owner: Leora.
+
 
 Treats each gene as a document and k-mers as words, then asks:
   1. Sequence statistics per class (length, GC, GC at codon position 3, CpG).

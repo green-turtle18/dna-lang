@@ -1,7 +1,7 @@
 """
 verify_claims.py — check AI-generated explanations against the data
 (proposal task 6).
-Owner: Leora.
+
 
 Chatbots asked to explain our results make claims like "disease genes are
 CpG-rich because CpG sites mutate often" or "disease genes have more repeats".

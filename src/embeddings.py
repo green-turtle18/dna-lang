@@ -1,6 +1,6 @@
 """
 embeddings.py — word2vec for DNA (proposal task 3).
-Owner: Leora.
+
 
 Treats each gene as a sentence and trains word2vec (skip-gram) on its words:
   * codons   : in-frame, non-overlapping triplets (61 sense codons)

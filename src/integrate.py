@@ -1,7 +1,7 @@
 """
 integrate.py — combine everyone's results and pick the final model
 (proposal tasks 4 and 7).
-Owner: Leora.
+
 
 Reads every results/disease/results_*.csv (README contract 4), writes one
 combined table, and draws the two summary figures for the talk:
@@ -31,6 +31,7 @@ MODEL_STYLE = {                     # colour + shape, so it's never colour alone
     "logreg": dict(color=ps.TEXT_SECONDARY, marker="o", label="logistic regression"),
     "rf":     dict(color=ps.THIRD, marker="s", label="random forest"),
     "mlp":    dict(color="#6250d6", marker="^", label="MLP"),
+    "transformer": dict(color="#eda100", marker="D", label="transformer"),
 }
 
 
@@ -44,10 +45,14 @@ def load():
     df["k"] = df.k.astype(str)
     df["control"] = df.notes.astype(str).str.extract(r"control=(\w+)")[0]
     df["label"] = np.select(
-        [df.representation == "composition_only",
+        [df.representation == "transformer_mlm",
+         df.representation == "transformer_scratch",
+         df.representation == "composition_only",
          df.representation == "w2v_mean",
          df.split_type == "shuffled_bases"],
-        ["control: " + df.control.fillna("").str.replace("_", " + "),
+        ["transformer, pretrained (codons)",
+         "transformer, no pretraining (codons)",
+         "control: " + df.control.fillna("").str.replace("_", " + "),
          "word2vec mean, " + df.k.str.replace("codon", "codons").where(df.k == "codon",
                                                                        df.k + "-mers"),
          "control: shuffled bases (k=6)"],
@@ -57,6 +62,7 @@ def load():
 
 ORDER = ["TF-IDF k=3", "TF-IDF k=4", "TF-IDF k=6", "TF-IDF k=3-6", "TF-IDF codons",
          "word2vec mean, codons", "word2vec mean, 6-mers",
+         "transformer, pretrained (codons)", "transformer, no pretraining (codons)",
          "control: length", "control: gc", "control: length + gc"]
 
 
@@ -75,7 +81,7 @@ def plot_by_representation(df):
         ax.axvline(0.5, color=ps.NEUTRAL, lw=1, ls="--")
         ax.text(0.5, -0.75, " chance", color=ps.TEXT_SECONDARY, fontsize=7.5,
                 va="bottom", ha="left")
-        offsets = {"logreg": -0.22, "rf": 0.0, "mlp": 0.22}
+        offsets = {"logreg": -0.22, "rf": 0.0, "mlp": 0.22, "transformer": 0.0}
         for model, st in MODEL_STYLE.items():
             m = s[s.model == model]
             y = [labels.index(l) + offsets[model] for l in m.label]
@@ -90,7 +96,7 @@ def plot_by_representation(df):
         ax.set_xlabel("ROC-AUC on test set")
         ax.grid(axis="y", visible=False)
     handles, names = axes[1].get_legend_handles_labels()
-    fig.legend(handles, names, loc="upper right", ncol=3, fontsize=8,
+    fig.legend(handles, names, loc="upper right", ncol=4, fontsize=8,
                bbox_to_anchor=(0.995, 0.995))
     lo = max(0.4, d.roc_auc.min() - 0.02)
     for ax in axes:
@@ -104,7 +110,8 @@ def plot_by_representation(df):
 
 def plot_leaky_to_honest(df):
     plt = ps.setup()
-    kmer = df[df.representation.isin(["tfidf", "w2v_mean"]) & df.split_type.isin(SPLITS)]
+    kmer = df[df.representation.isin(["tfidf", "w2v_mean", "transformer_mlm",
+                                      "transformer_scratch"]) & df.split_type.isin(SPLITS)]
     ctrl = df[df.label == "control: length + gc"]
     best_k = kmer.groupby("split_type").roc_auc.max().reindex(SPLITS)
     best_c = ctrl.groupby("split_type").roc_auc.max().reindex(SPLITS)

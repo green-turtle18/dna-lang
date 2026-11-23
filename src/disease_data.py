@@ -1,6 +1,5 @@
 """
 disease_data.py — curated disease vs non-disease human gene dataset.
-Owner: Leora.
 
 The proposal's framing question is disease vs non-disease. The Kaggle
 corpus only has gene-family labels, so this module builds a second,

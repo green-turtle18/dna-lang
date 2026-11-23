@@ -93,7 +93,7 @@ From `results/disease/embeddings/` (`python src/embeddings.py`). word2vec
   - synonyms stay closer even when their third base differs (0.83, against
     0.75 for non-synonyms with the same third base), so this isn't just
     GC-rich codons clustering
-- **Word order matters.** Shuffling codon order inside each gene before
+- **Word order matters for meaning, less so for prediction.** Shuffling codon order inside each gene before
   training halves the effect: the synonym advantage falls from 0.13 to
   0.06, and nearest-neighbour synonyms fall from 57% to 36%. About half of
   what word2vec learns comes from *local context*, which bag-of-words
@@ -101,6 +101,12 @@ From `results/disease/embeddings/` (`python src/embeddings.py`). word2vec
 - **The main axis of the learned space is third-base GC.** On a 2-D PCA,
   G/C-ending codons separate from A/T-ending ones. The synonym structure
   sits in the other dimensions, which is why the heatmap shows it better.
+- **The transformer learned much less meaning than word2vec.** Its input
+  embeddings show no synonym structure (p = 0.42). Its masked-codon output
+  layer shows only a weak one: nearest neighbour is a synonym 15% of the
+  time, against 5% by chance, while 92% just share the third-base G/C
+  type (`results/disease/transformer/`). A small model trained briefly
+  mostly learns "GC-rich gaps take GC-rich codons".
 - **Gene vectors** (the mean of word vectors, like a sentence embedding)
   classify as well as TF-IDF, but no better. Best on `lenmatch`: codon
   vectors + random forest, 0.601, against TF-IDF codons + logreg, 0.599.
@@ -113,6 +119,23 @@ Figures: `embedding_codon_similarity_heatmap.png`,
 
 - **Simple beats complex.** The MLP never beats logistic regression or
   the random forest on `lenmatch`; its best is 0.587 (word2vec 6-mers).
+- **Transformer (a mini-DNABERT, `src/transformer.py`).**
+  - *Model:* a 2-layer transformer reading codons as tokens, trained from
+    scratch on CPU. It was first pretrained BERT-style (predict hidden
+    codons, no labels), then fine-tuned to classify.
+  - *Pretraining:* it predicts a hidden codon 14.5% of the time, against
+    1.6% for random guessing. That's real structure, but modest.
+  - *Classification:* **0.587** on `lenmatch` with pretraining and
+    **0.579** without, the same as the simple models. On `family` it scores
+    0.630, below the random forest's 0.661.
+  - *Takeaway:* seeing codon order and long-range context didn't beat
+    counting codons, and pretraining didn't measurably help (+0.008, within
+    noise). This matches the rest of the project: the disease signal is in
+    *what* a gene is made of, not *how* it's arranged.
+  - *Caveat:* this is a small model (~0.1M parameters), not the real
+    pretrained DNABERT (~100M parameters, trained on the whole genome).
+    That needs a GPU and model downloads. Validation AUC was still rising
+    slightly at the last epoch, so longer training might add a little.
 - **Class imbalance had to be fixed.** With 29% disease genes, unweighted
   models predicted "non-disease" for everything (71% accuracy, macro-F1
   0.42). Class weights (LR, RF) and oversampling (MLP) fixed it.
@@ -211,7 +234,8 @@ vocabulary and context to recognise sequence patterns associated with disease?"*
 - **Grammar:** yes. The rare-word analysis exposes CpG avoidance and
   in-frame stop avoidance.
 - **Vocabulary and context:** yes. word2vec recovered the genetic code from
-  context, and about half of that came from word order.
+  context, and about half of that came from word order. A small transformer
+  that sees the whole order did *not* classify better than counting.
 - **Disease:** only weakly. ROC-AUC is 0.60 once length is removed. The
   signal is real and interpretable (CpG mutability, protein class, gene
   families), but most of what makes a gene a disease gene isn't in its
@@ -225,7 +249,8 @@ vocabulary and context to recognise sequence patterns associated with disease?"*
 1. The question, and why we use genes rather than organisms (README scope note)
 2. Dataset: 15,665 genes, how the labels were made, and the caveats
 3. The length trap: `summary_leaky_to_honest.png`
-4. Representations × models: `summary_auc_by_representation.png`
+4. Representations × models, including the transformer:
+   `summary_auc_by_representation.png`
 5. The vocabulary: `vocab_zipf_k6.png` plus the CpG / rare-words point
 6. What differs: `vocab_differential_codons.png`
 7. Where the signal lives: `interpret_feature_sets.png`
@@ -243,5 +268,5 @@ vocabulary and context to recognise sequence patterns associated with disease?"*
 - Very long genes (TTN, SCN1A, HTT) aren't in the source data.
 - One random seed and one train/test split per split type. Gaps under
   about 0.03 AUC are noise.
-- No transformer (DNABERT): out of scope for the course tools and time.
-  It's the natural next step.
+- The transformer is a small from-scratch model, not the real pretrained
+  DNABERT. Fine-tuning DNABERT on a GPU is the natural next step.

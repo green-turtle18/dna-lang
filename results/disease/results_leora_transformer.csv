@@ -1,0 +1,4 @@
+representation,k,model,split_type,accuracy,macro_f1,roc_auc,n_features,seed,notes
+transformer_mlm,codon,transformer,lenmatch,0.5598,0.556,0.5865,91841,0,pretrained; val AUC 0.599; 419s
+transformer_scratch,codon,transformer,lenmatch,0.547,0.5391,0.5788,91841,0,no pretraining; val AUC 0.605; 425s
+transformer_mlm,codon,transformer,family,0.6579,0.5794,0.6301,91841,0,pretrained; val AUC 0.635; 737s

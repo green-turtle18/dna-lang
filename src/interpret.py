@@ -1,6 +1,5 @@
 """
 interpret.py — what have the models actually learned? (proposal task 5)
-Owner: Leora.
 
 Three questions, all on the lenmatch split (length and GC matched, paralog
 families kept apart), with the family split alongside for reference:

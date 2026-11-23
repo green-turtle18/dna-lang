@@ -1,0 +1,9 @@
+,input embedding,output (masked-codon) layer
+mean_cosine_synonymous,0.0007,0.0294
+mean_cosine_non_synonymous,-0.0022,-0.0077
+difference,0.0029,0.0371
+permutation_p_value,0.42429,0.01899
+synonyms_closer_within_same_3rd_base_type_p,0.187,0.00275
+nearest_neighbour_is_synonym,0.0,0.148
+nearest_neighbour_is_synonym_by_chance,0.049,0.049
+nearest_neighbour_same_3rd_base_type,0.656,0.918

@@ -5,3 +5,4 @@ scipy
 matplotlib
 gensim
 adjustText   # optional, only for label placement in one figure
+torch        # only for src/transformer.py

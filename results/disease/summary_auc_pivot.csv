@@ -20,6 +20,8 @@ control: length,logreg,0.63,0.625,0.519
 control: length,rf,0.567,0.546,0.482
 control: length + gc,logreg,0.623,0.615,0.488
 control: length + gc,rf,0.601,0.569,0.478
+"transformer, no pretraining (codons)",transformer,,,0.579
+"transformer, pretrained (codons)",transformer,,0.63,0.586
 "word2vec mean, 6-mers",logreg,0.578,0.598,0.573
 "word2vec mean, 6-mers",mlp,0.623,0.601,0.587
 "word2vec mean, 6-mers",rf,0.655,0.655,0.592

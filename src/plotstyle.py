@@ -1,6 +1,6 @@
 """
 plotstyle.py — one look for every second-half figure.
-Owner: Leora.
+
 
 Colours come from a colourblind-validated palette: non-disease is always
 blue, disease is always orange, in every figure, so the slides read as one
