@@ -6,13 +6,13 @@ __pycache__/
 venv/
 
 # raw data — everyone downloads it themselves
-data/*.txt
-data/*.fasta
-data/sequences.csv
+data/gene_family/*.txt
+data/gene_family/*.fasta
+data/gene_family/sequences.csv
 
 # but keep the split, it must be identical for everyone
-!data/splits.csv
-!data/splits_random.csv
+!data/gene_family/splits.csv
+!data/gene_family/splits_random.csv
 
 # disease dataset: raw downloads are rebuilt by src/disease_data.py
-data/raw_disease/
+data/disease/raw/

@@ -15,7 +15,7 @@ pip install -r requirements.txt
 
 Download the dataset from
 https://www.kaggle.com/datasets/nageshsingh/dna-sequence-dataset
-into `data/` as `human.txt`, `chimpanzee.txt`, `dog.txt`.
+into `data/gene_family/` as `human.txt`, `chimpanzee.txt`, `dog.txt`.
 Raw files are gitignored — everyone downloads their own.
 
 Then build the dataset:
@@ -35,7 +35,9 @@ Should print `(5708, 7)`. If it prints `(30, 6)` you're on stub data —
 
 ## Layout
 
-    data/        sequences.csv (gitignored), split files (committed)
+    data/
+      gene_family/  Kaggle human/chimp/dog data: sequences.csv (gitignored), split files (committed)
+      disease/      disease vs non-disease genes + splits (committed), see docs/disease_dataset.md
     src/         one module per person
     docs/        per-person guides — suggestions, not requirements
     figures/     PNGs for slides, 150 dpi
@@ -60,10 +62,10 @@ are guides for getting your own part done; follow them or don't.
 
 # Contracts
 
-## 1. `data/sequences.csv` — produced by NAME1
+## 1. `data/gene_family/sequences.csv` — produced by NAME1
 
 5,708 sequences after cleaning. Gitignored — run `python src/dataio.py`
-to regenerate after downloading the Kaggle files into `data/`.
+to regenerate after downloading the Kaggle files into `data/gene_family/`.
 
 | column | type | notes |
 |---|---|---|

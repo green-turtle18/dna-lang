@@ -11,7 +11,8 @@ from src.disease_data import load_disease_split_data
 train, test = load_disease_split_data("family")   # "random" | "family" | "lenmatch"
 ```
 
-Rebuild from scratch (downloads about 30 MB from GitHub, takes about a minute):
+All files live in `data/disease/`. Rebuild from scratch (downloads about 30 MB
+from GitHub into `data/disease/raw/`, takes about a minute):
 
 ```bash
 python src/disease_data.py
@@ -27,7 +28,7 @@ python src/disease_data.py
 | 0 | non-disease gene | 11,182 (71%) | 1,074 | 0.527 |
 
 Another 782 genes have only weak or partial evidence. They are set aside
-in `disease_genes_ambiguous.csv` and get no label (details below).
+in `data/disease/disease_genes_ambiguous.csv` and get no label (details below).
 
 ### Sequences
 

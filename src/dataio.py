@@ -2,8 +2,8 @@
 dataio.py — data loading and splits.
 Owner: Leora.
 
-Produces data/sequences.csv (contract 1) and data/splits.csv,
-data/splits_random.csv (contract 2).
+Produces data/gene_family/sequences.csv (contract 1) and the split files
+data/gene_family/splits*.csv (contract 2).
 
 Stub mode works before the real files exist, so nobody is blocked:
     from src.dataio import load_data
@@ -17,7 +17,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-DATA = Path(__file__).resolve().parents[1] / "data"
+DATA = Path(__file__).resolve().parents[1] / "data" / "gene_family"
 
 SPECIES_FILES = {
     "human": "human.txt",
@@ -69,7 +69,8 @@ def build(verbose=True):
         path = DATA / fname
         if not path.exists():
             raise FileNotFoundError(
-                f"{path} not found. Download the Kaggle dataset into data/."
+                f"{path} not found. Download the Kaggle dataset into data/gene_family/ "
+                "(files that used to sit directly in data/ belong there now)."
             )
         d = pd.read_csv(path, sep="\t")
         d.columns = [c.strip().lower() for c in d.columns]

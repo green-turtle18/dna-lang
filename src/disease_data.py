@@ -16,7 +16,7 @@ Sequences are full-length human protein-coding ORFs (start codon to the
 last sense codon, stop codon removed) from the human ORFeome 9.1
 reference, one per gene. Full details and caveats: docs/disease_dataset.md
 
-Build (downloads ~30 MB from GitHub into data/raw_disease/):
+Build (downloads ~30 MB from GitHub into data/disease/raw/):
 
     python src/disease_data.py
 
@@ -34,8 +34,8 @@ import urllib.request
 import numpy as np
 import pandas as pd
 
-DATA = Path(__file__).resolve().parents[1] / "data"
-RAW = DATA / "raw_disease"
+DATA = Path(__file__).resolve().parents[1] / "data" / "disease"
+RAW = DATA / "raw"
 OUT = DATA / "disease_genes.csv"
 OUT_AMBIGUOUS = DATA / "disease_genes_ambiguous.csv"
 
