@@ -200,6 +200,13 @@ improving classification.
 
 ---
 
+## Submission
+
+- **Report:** [`report/project_report.pdf`](report/project_report.pdf), built from
+  `report/project_report.tex` (official template, layout unchanged; 4 pages
+  including references). To rebuild: `cd report && latexmk -pdf project_report.tex`.
+- **Contributions:** [`docs/contributions/`](docs/contributions/README.md)
+
 ## Running everything (second half)
 
 Every proposal task now has a module. Run from the repo root, in this order

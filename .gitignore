@@ -16,3 +16,11 @@ data/gene_family/sequences.csv
 
 # disease dataset: raw downloads are rebuilt by src/disease_data.py
 data/disease/raw/
+
+# LaTeX build files
+report/*.aux
+report/*.log
+report/*.out
+report/*.fls
+report/*.fdb_latexmk
+report/*.synctex.gz
