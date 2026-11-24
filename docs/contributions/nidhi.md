@@ -5,7 +5,12 @@
 What the models actually learned, and whether it's real (proposal tasks 5 and 6).
 
 - **Controls:** length-only, GC-only and length+GC baselines,
-  shuffled-bases control, and PCA (`src/controls.py`).
+  shuffled-bases control (`src/controls.py`).
+- **PCA visualizations:** PCA of the k-mer TF-IDF features, to check whether
+  the classes separate (`figures/disease/pca_tfidf_k6.png`).
+- **Model result interpretation:** reading the combined results across splits
+  and representations: what the length/GC controls rule out, and which gaps
+  between models are within noise.
 - **Interpretation:** models restricted to one kind of information
   (amino acids, synonymous codon choice, CpG, dinucleotides), synonymous
   shuffling, composition regression, and the gene-family check
